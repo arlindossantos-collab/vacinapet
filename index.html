@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carteira de Vacinação Pet</title>
+  <!-- Tailwind CSS CDN para estilização rápida -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-4 md:p-8">
+
+  <div class="max-w-3xl mx-auto space-y-6">
+    
+    <!-- Cabeçalho -->
+    <header class="bg-emerald-600 text-white rounded-2xl p-6 shadow-lg flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold">💉 Carteira de Vacinação Digital</h1>
+        <p class="text-emerald-100 text-sm mt-1">Gestão de saúde e histórico vacinal</p>
+      </div>
+    </header>
+
+    <!-- Card do Pet -->
+    <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+      <div class="flex justify-between items-start mb-4">
+        <h2 class="text-xl font-bold text-slate-700">🐶 Dados do Paciente</h2>
+        <button id="btn-editar-pet" onclick="alternarEdicaoPet()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-lg transition">
+          Editar Dados
+        </button>
+      </div>
+
+      <!-- Visualização dos Dados -->
+      <div id="pet-view" class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <div><span class="text-slate-400 block text-xs">Nome</span><strong id="v-nome">-</strong></div>
+        <div><span class="text-slate-400 block text-xs">Espécie / Raça</span><strong id="v-raca">-</strong></div>
+        <div><span class="text-slate-400 block text-xs">Sexo</span><strong id="v-sexo">-</strong></div>
+        <div><span class="text-slate-400 block text-xs">Microchip</span><strong id="v-microchip">-</strong></div>
+        <div><span class="text-slate-400 block text-xs">Tutor</span><strong id="v-tutor">-</strong></div>
+      </div>
+
+      <!-- Formulário de Edição do Pet (Oculto por padrão) -->
+      <form id="pet-form" onsubmit="salvarPet(event)" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <label>Nome: <input id="f-nome" class="w-full border p-2 rounded-lg" required /></label>
+        <label>Espécie: <input id="f-especie" class="w-full border p-2 rounded-lg" required /></label>
+        <label>Raça: <input id="f-raca" class="w-full border p-2 rounded-lg" required /></label>
+        <label>Sexo: <input id="f-sexo" class="w-full border p-2 rounded-lg" required /></label>
+        <label>Microchip: <input id="f-microchip" class="w-full border p-2 rounded-lg" /></label>
+        <label>Tutor: <input id="f-tutor" class="w-full border p-2 rounded-lg" /></label>
+        <div class="sm:col-span-2 text-right">
+          <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-xs">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Seção de Vacinas -->
+    <div class="space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-slate-700">🛡️ Histórico de Vacinas</h2>
+        <button onclick="abrirModalVacina()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2 rounded-xl shadow transition">
+          + Registrar Vacina
+        </button>
+      </div>
+
+      <!-- Container onde as vacinas serão renderizadas dinamicamente via JS -->
+      <div id="lista-vacinas" class="space-y-4"></div>
+    </div>
+
+  </div>
+
+  <!-- Modal Nova Vacina -->
+  <div id="modal-vacina" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">Nova Vacina</h3>
+      <form onsubmit="adicionarVacina(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome da Vacina *</label>
+          <input id="vac-nome" required placeholder="Ex: Canigen R, GiardiaVax..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Descrição / Indicação</label>
+          <input id="vac-desc" placeholder="Ex: Antirrábica, Giárdia..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Data Aplicação *</label>
+            <input id="vac-data-app" required type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Próxima Dose</label>
+            <input id="vac-data-prox" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Local de Aplicação</label>
+          <input id="vac-local" placeholder="Ex: Clínica VetVida" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Médico Veterinário (Nome e CRMV)</label>
+          <input id="vac-medico" placeholder="Ex: Dra. Racema Paulino (CRMV-PE 3260)" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="fecharModalVacina()" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl">Cancelar</button>
+          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-medium py-2.5 rounded-xl hover:bg-emerald-700">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
