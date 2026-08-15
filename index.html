@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carteira de Vacinação Pet</title>
-  <!-- Tailwind CSS CDN para estilização rápida -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-4 md:p-8">
@@ -23,7 +23,7 @@
     <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
       <div class="flex justify-between items-start mb-4">
         <h2 class="text-xl font-bold text-slate-700">🐶 Dados do Paciente</h2>
-        <button id="btn-editar-pet" onclick="alternarEdicaoPet()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-lg transition">
+        <button id="btn-editar-pet" type="button" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-lg transition">
           Editar Dados
         </button>
       </div>
@@ -37,16 +37,16 @@
         <div><span class="text-slate-400 block text-xs">Tutor</span><strong id="v-tutor">-</strong></div>
       </div>
 
-      <!-- Formulário de Edição do Pet (Oculto por padrão) -->
-      <form id="pet-form" onsubmit="salvarPet(event)" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-        <label>Nome: <input id="f-nome" class="w-full border p-2 rounded-lg" required /></label>
-        <label>Espécie: <input id="f-especie" class="w-full border p-2 rounded-lg" required /></label>
-        <label>Raça: <input id="f-raca" class="w-full border p-2 rounded-lg" required /></label>
-        <label>Sexo: <input id="f-sexo" class="w-full border p-2 rounded-lg" required /></label>
-        <label>Microchip: <input id="f-microchip" class="w-full border p-2 rounded-lg" /></label>
-        <label>Tutor: <input id="f-tutor" class="w-full border p-2 rounded-lg" /></label>
-        <div class="sm:col-span-2 text-right">
-          <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-xs">Salvar Alterações</button>
+      <!-- Formulário de Edição do Pet -->
+      <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-2">
+        <label class="block">Nome: <input id="f-nome" class="w-full border p-2 rounded-lg" required /></label>
+        <label class="block">Espécie: <input id="f-especie" class="w-full border p-2 rounded-lg" required /></label>
+        <label class="block">Raça: <input id="f-raca" class="w-full border p-2 rounded-lg" required /></label>
+        <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2 rounded-lg" required /></label>
+        <label class="block">Microchip: <input id="f-microchip" class="w-full border p-2 rounded-lg" /></label>
+        <label class="block">Tutor: <input id="f-tutor" class="w-full border p-2 rounded-lg" /></label>
+        <div class="sm:col-span-2 text-right mt-2">
+          <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-xs hover:bg-emerald-700">Salvar Alterações</button>
         </div>
       </form>
     </div>
@@ -55,12 +55,12 @@
     <div class="space-y-4">
       <div class="flex justify-between items-center">
         <h2 class="text-xl font-bold text-slate-700">🛡️ Histórico de Vacinas</h2>
-        <button onclick="abrirModalVacina()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2 rounded-xl shadow transition">
+        <button id="btn-abrir-modal" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2 rounded-xl shadow transition">
           + Registrar Vacina
         </button>
       </div>
 
-      <!-- Container onde as vacinas serão renderizadas dinamicamente via JS -->
+      <!-- Lista de Vacinas -->
       <div id="lista-vacinas" class="space-y-4"></div>
     </div>
 
@@ -70,7 +70,7 @@
   <div id="modal-vacina" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
       <h3 class="text-lg font-bold text-slate-800">Nova Vacina</h3>
-      <form onsubmit="adicionarVacina(event)" class="space-y-3 text-sm">
+      <form id="form-vacina" class="space-y-3 text-sm">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Nome da Vacina *</label>
           <input id="vac-nome" required placeholder="Ex: Canigen R, GiardiaVax..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -99,13 +99,227 @@
         </div>
 
         <div class="flex gap-2 pt-2">
-          <button type="button" onclick="fecharModalVacina()" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl">Cancelar</button>
+          <button id="btn-fechar-modal" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
           <button type="submit" class="w-1/2 bg-emerald-600 text-white font-medium py-2.5 rounded-xl hover:bg-emerald-700">Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- Lógica da Aplicação (JavaScript Incorporado) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Dados padrão para carga inicial
+      const petPadrao = {
+        nome: "Theo",
+        especie: "Canina",
+        raca: "Chihuahua",
+        sexo: "Macho",
+        microchip: "963003100111144",
+        tutor: "Arlindo Santos"
+      };
+
+      const vacinasPadrao = [
+        {
+          id: "1",
+          nome: "Canigen R",
+          descricao: "Vacina contra Raiva canina.",
+          dataAplicacao: "2024-07-26",
+          dataProxima: "2025-07-26",
+          local: "Clínica VetVida",
+          medico: "Dra. Racema Paulino dos Santos (CRMV-PE 3260)"
+        }
+      ];
+
+      // Inicializa variáveis do localStorage
+      let petInfo = JSON.parse(localStorage.getItem('pet_info')) || petPadrao;
+      let vacinas = JSON.parse(localStorage.getItem('pet_vacinas')) || vacinasPadrao;
+
+      // Elementos do DOM
+      const btnEditarPet = document.getElementById('btn-editar-pet');
+      const petView = document.getElementById('pet-view');
+      const petForm = document.getElementById('pet-form');
+      const btnAbrirModal = document.getElementById('btn-abrir-modal');
+      const btnFecharModal = document.getElementById('btn-fechar-modal');
+      const modalVacina = document.getElementById('modal-vacina');
+      const formVacina = document.getElementById('form-vacina');
+
+      // Renderiza Pet
+      function renderizarPet() {
+        document.getElementById('v-nome').textContent = petInfo.nome;
+        document.getElementById('v-raca').textContent = `${petInfo.especie} (${petInfo.raca})`;
+        document.getElementById('v-sexo').textContent = petInfo.sexo;
+        document.getElementById('v-microchip').textContent = petInfo.microchip || '-';
+        document.getElementById('v-tutor').textContent = petInfo.tutor || '-';
+
+        document.getElementById('f-nome').value = petInfo.nome;
+        document.getElementById('f-especie').value = petInfo.especie;
+        document.getElementById('f-raca').value = petInfo.raca;
+        document.getElementById('f-sexo').value = petInfo.sexo;
+        document.getElementById('f-microchip').value = petInfo.microchip;
+        document.getElementById('f-tutor').value = petInfo.tutor;
+      }
+
+      // Alterna edição do Pet
+      btnEditarPet.addEventListener('click', () => {
+        const escondido = petForm.classList.contains('hidden');
+        if (escondido) {
+          petForm.classList.remove('hidden');
+          petView.classList.add('hidden');
+          btnEditarPet.textContent = 'Cancelar';
+        } else {
+          petForm.classList.add('hidden');
+          petView.classList.remove('hidden');
+          btnEditarPet.textContent = 'Editar Dados';
+        }
+      });
+
+      // Salva dados do Pet
+      petForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        petInfo = {
+          nome: document.getElementById('f-nome').value,
+          especie: document.getElementById('f-especie').value,
+          raca: document.getElementById('f-raca').value,
+          sexo: document.getElementById('f-sexo').value,
+          microchip: document.getElementById('f-microchip').value,
+          tutor: document.getElementById('f-tutor').value
+        };
+        localStorage.setItem('pet_info', JSON.stringify(petInfo));
+        renderizarPet();
+        petForm.classList.add('hidden');
+        petView.classList.remove('hidden');
+        btnEditarPet.textContent = 'Editar Dados';
+      });
+
+      // Renderiza Vacinas
+      function renderizarVacinas() {
+        const container = document.getElementById('lista-vacinas');
+        container.innerHTML = '';
+
+        if (vacinas.length === 0) {
+          container.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200">Nenhuma vacina registrada.</div>`;
+          return;
+        }
+
+        vacinas.forEach(v => {
+          const card = document.createElement('div');
+          card.className = "bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3";
+
+          const dataApp = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+          const dataProx = v.dataProxima ? new Date(v.dataProxima + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não agendado';
+
+          card.innerHTML = `
+            <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-lg font-bold text-slate-800">✅ ${v.nome}</h3>
+                ${v.descricao ? `<p class="text-xs text-slate-500 mt-0.5">${v.descricao}</p>` : ''}
+              </div>
+              <button data-id="${v.id}" class="btn-deletar text-slate-300 hover:text-red-500 transition text-sm">🗑️</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
+              <div class="bg-slate-50 p-2.5 rounded-lg">
+                <span class="block text-slate-400">Aplicação</span>
+                <strong>${dataApp}</strong>
+              </div>
+
+              <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-100">
+                <span class="block text-amber-600 font-medium">Próxima Dose / Revacinação</span>
+                <strong class="text-amber-800">${dataProx}</strong>
+              </div>
+
+              ${v.local ? `<div><strong>Local:</strong> ${v.local}</div>` : ''}
+              ${v.medico ? `<div><strong>Vet:</strong> ${v.medico}</div>` : ''}
+            </div>
+
+            ${v.dataProxima ? `
+              <div class="pt-2 flex justify-end">
+                <button data-nome="${v.nome}" data-prox="${v.dataProxima}" data-local="${v.local || ''}" data-medico="${v.medico || ''}"
+                        class="btn-agenda text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition font-medium">
+                  🔔 Adicionar Lembrete na Agenda (.ics)
+                </button>
+              </div>
+            ` : ''}
+          `;
+
+          container.appendChild(card);
+        });
+
+        // Eventos dos botões de deletar
+        document.querySelectorAll('.btn-deletar').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            vacinas = vacinas.filter(item => item.id !== id);
+            localStorage.setItem('pet_vacinas', JSON.stringify(vacinas));
+            renderizarVacinas();
+          });
+        });
+
+        // Eventos dos botões de agenda
+        document.querySelectorAll('.btn-agenda').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const nome = e.currentTarget.getAttribute('data-nome');
+            const prox = e.currentTarget.getAttribute('data-prox');
+            const local = e.currentTarget.getAttribute('data-local');
+            const medico = e.currentTarget.getAttribute('data-medico');
+            baixarEventoAgenda(nome, prox, local, medico);
+          });
+        });
+      }
+
+      // Controle do Modal
+      btnAbrirModal.addEventListener('click', () => modalVacina.classList.remove('hidden'));
+      btnFecharModal.addEventListener('click', () => modalVacina.classList.add('hidden'));
+
+      // Adiciona Vacina
+      formVacina.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nova = {
+          id: Date.now().toString(),
+          nome: document.getElementById('vac-nome').value,
+          descricao: document.getElementById('vac-desc').value,
+          dataAplicacao: document.getElementById('vac-data-app').value,
+          dataProxima: document.getElementById('vac-data-prox').value,
+          local: document.getElementById('vac-local').value,
+          medico: document.getElementById('vac-medico').value
+        };
+
+        vacinas.unshift(nova);
+        localStorage.setItem('pet_vacinas', JSON.stringify(vacinas));
+        renderizarVacinas();
+        modalVacina.classList.add('hidden');
+        formVacina.reset();
+      });
+
+      // Baixar evento .ics
+      function baixarEventoAgenda(nome, dataProx, local, medico) {
+        const dataFormatada = dataProx.replace(/-/g, '');
+        const icsData = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Carteira Vacina Pet//PT
+BEGIN:VEVENT
+SUMMARY:Reforço Vacina ${nome} - ${petInfo.nome}
+DESCRIPTION:Vacina: ${nome}\\nMédico: ${medico}\\nLocal: ${local}
+DTSTART:${dataFormatada}T090000Z
+DTEND:${dataFormatada}T100000Z
+END:VEVENT
+END:VCALENDAR`;
+
+        const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.setAttribute('download', `vacina_${nome.toLowerCase()}.ics`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // Renderização Inicial
+      renderizarPet();
+      renderizarVacinas();
+    });
+  </script>
 </body>
 </html>
