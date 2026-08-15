@@ -6,8 +6,32 @@
   <title>Carteira de Vacinação Pet</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Script do Google Maps Places API (Substitua SUA_CHAVE_API_DO_GOOGLE pela sua chave real se desejar o auto-complete do Google) -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API_DO_GOOGLE&libraries=places" async defer></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-4 md:p-8">
+
+  <!-- Datalist com Especialidades Veterinárias para autocompletar e aceitar entrada livre -->
+  <datalist id="lista-especialidades">
+    <option value="Anestesiologia Veterinária"></option>
+    <option value="Cardiologia Veterinária"></option>
+    <option value="Cirurgia Veterinária"></option>
+    <option value="Clínica Geral"></option>
+    <option value="Dermatologia Veterinária"></option>
+    <option value="Endocrinologia Veterinária"></option>
+    <option value="Felinos"></option>
+    <option value="Fisioterapia e Reabilitação"></option>
+    <option value="Gastroenterologia Veterinária"></option>
+    <option value="Infectologia Veterinária"></option>
+    <option value="Nefrologia e Urologia"></option>
+    <option value="Neurologia Veterinária"></option>
+    <option value="Nutrição Animal"></option>
+    <option value="Oftalmologia Veterinária"></option>
+    <option value="Oncologia Veterinária"></option>
+    <option value="Ortopedia Veterinária"></option>
+    <option value="Odontologia Veterinária"></option>
+    <option value="Radiologia e Diagnóstico por Imagem"></option>
+  </datalist>
 
   <div class="max-w-3xl mx-auto space-y-6">
     
@@ -169,12 +193,31 @@
             <input id="vac-data-prox" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
           </div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Local / Clínica de Aplicação</label>
-          <input id="vac-local" placeholder="Ex: Clínica VetVida" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+
+        <!-- Seção da Clínica (Busca Automática via Google) -->
+        <div class="border-t border-slate-100 pt-3 space-y-2">
+          <span class="block text-xs font-bold text-slate-700">🏥 Clínica / Local de Aplicação</span>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">Nome da Clínica (Digite para buscar no Google Maps)</label>
+            <input id="vac-local" placeholder="Ex: Clínica VetVida, Hospital Veterinário..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">Endereço Completo</label>
+            <input id="vac-clinica-endereco" placeholder="Ex: Av. Principal, 123 - Recife" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs text-slate-500 mb-1">Telefone</label>
+              <input id="vac-clinica-telefone" placeholder="Ex: (81) 99999-9999" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-500 mb-1">Website / Instagram</label>
+              <input id="vac-clinica-site" placeholder="Ex: instagram.com/clinica" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
+            </div>
+          </div>
         </div>
 
-        <!-- Seção do Veterinário com campos separados -->
+        <!-- Seção do Veterinário -->
         <div class="border-t border-slate-100 pt-3 space-y-2">
           <span class="block text-xs font-bold text-slate-700">👨‍⚕️ Médico Veterinário</span>
           <div>
@@ -183,8 +226,8 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-xs text-slate-500 mb-1">Especialidade</label>
-              <input id="vac-vet-especialidade" placeholder="Ex: Dermatologia, Geral" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
+              <label class="block text-xs text-slate-500 mb-1">Especialidade (Escolha ou digite)</label>
+              <input id="vac-vet-especialidade" list="lista-especialidades" placeholder="Ex: Clínica Geral, Cardiologia..." class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
             </div>
             <div>
               <label class="block text-xs text-slate-500 mb-1">CRMV</label>
@@ -204,6 +247,29 @@
   <!-- Lógica da Aplicação (JavaScript) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Inicializa Google Places Autocomplete para o campo de Clínica
+      let autocomplete;
+      function initGoogleAutocomplete() {
+        const inputClinica = document.getElementById('vac-local');
+        if (window.google && window.google.maps && window.google.maps.places) {
+          autocomplete = new google.maps.places.Autocomplete(inputClinica, {
+            types: ['establishment'],
+            fields: ['name', 'formatted_address', 'formatted_phone_number', 'website']
+          });
+
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (place.name) document.getElementById('vac-local').value = place.name;
+            if (place.formatted_address) document.getElementById('vac-clinica-endereco').value = place.formatted_address;
+            if (place.formatted_phone_number) document.getElementById('vac-clinica-telefone').value = place.formatted_phone_number;
+            if (place.website) document.getElementById('vac-clinica-site').value = place.website;
+          });
+        }
+      }
+
+      // Tenta inicializar a busca do Google após a página carregar
+      setTimeout(initGoogleAutocomplete, 1000);
+
       // Dados padrão para carga inicial
       const petsPadrao = [
         {
@@ -226,6 +292,9 @@
               dataAplicacao: "2024-07-26",
               dataProxima: "2025-07-26",
               local: "Clínica VetVida",
+              clinicaEndereco: "Recife - PE",
+              clinicaTelefone: "",
+              clinicaSite: "",
               vetNome: "Dra. Racema Paulino dos Santos",
               vetEspecialidade: "Clínica Geral",
               vetCrmv: "CRMV-PE 3260"
@@ -257,18 +326,15 @@
       const modalVacinaTitulo = document.getElementById('modal-vacina-titulo');
       const formVacina = document.getElementById('form-vacina');
 
-      // Auxiliar: Retorna Pet Ativo
       function getPetAtivo() {
         return pets.find(p => p.id === petAtualId) || pets[0];
       }
 
-      // Auxiliar: Salva no localStorage
       function salvarDados() {
         localStorage.setItem('pets_app', JSON.stringify(pets));
         if (petAtualId) localStorage.setItem('pet_atual_id', petAtualId);
       }
 
-      // Auxiliar: Calcular Idade
       function calcularIdade(dataNasc) {
         if (!dataNasc) return '-';
         const hoje = new Date();
@@ -287,7 +353,6 @@
         return `${anos} ${anos === 1 ? 'ano' : 'anos'}${meses > 0 ? ` e ${meses} m` : ''}`;
       }
 
-      // Atualiza o Seletor de Pets
       function atualizarSeletorPets() {
         seletorPet.innerHTML = '';
         if (pets.length === 0) {
@@ -304,7 +369,6 @@
         });
       }
 
-      // Renderiza os dados do Pet selecionado
       function renderizarPet() {
         const pet = getPetAtivo();
         if (!pet) {
@@ -326,7 +390,6 @@
         document.getElementById('v-idade').textContent = calcularIdade(pet.nascimento);
         document.getElementById('v-microchip').textContent = pet.microchip || '-';
         
-        // Exibição formatada dos tutores
         const tutorEl = document.getElementById('v-tutor');
         if (pet.tutor) {
           const tutoresArray = pet.tutor.split(',').map(t => t.trim()).filter(t => t.length > 0);
@@ -343,7 +406,6 @@
           socialEl.textContent = '-';
         }
 
-        // Preenche formulário de edição
         document.getElementById('f-nome').value = pet.nome || '';
         document.getElementById('f-especie').value = pet.especie || 'Canina';
         document.getElementById('f-raca').value = pet.raca || '';
@@ -358,7 +420,6 @@
         renderizarVacinas();
       }
 
-      // Renderiza a Lista de Vacinas do Pet Ativo
       function renderizarVacinas() {
         const container = document.getElementById('lista-vacinas');
         container.innerHTML = '';
@@ -376,7 +437,6 @@
           const dataApp = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
           const dataProx = v.dataProxima ? new Date(v.dataProxima + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não agendado';
 
-          // Suporte retrocompatível para registros antigos com médico único
           const vetNome = v.vetNome || v.medico || '-';
           const vetEspecialidade = v.vetEspecialidade ? ` (${v.vetEspecialidade})` : '';
           const vetCrmv = v.vetCrmv ? ` - ${v.vetCrmv}` : '';
@@ -404,8 +464,24 @@
                 <strong class="text-amber-800">${dataProx}</strong>
               </div>
 
-              ${v.local ? `<div><strong>Local:</strong> ${v.local}</div>` : ''}
-              ${vetNome !== '-' ? `<div class="col-span-1 sm:col-span-2 bg-slate-50 p-2 rounded-lg"><strong>Vet:</strong> ${vetNome}${vetEspecialidade}${vetCrmv}</div>` : ''}
+              ${v.local ? `
+                <div class="col-span-1 sm:col-span-2 bg-slate-50 p-2.5 rounded-lg space-y-1">
+                  <div><strong>Clínica / Local:</strong> ${v.local}</div>
+                  ${v.clinicaEndereco ? `<div class="text-slate-500">📍 ${v.clinicaEndereco}</div>` : ''}
+                  ${v.clinicaTelefone || v.clinicaSite ? `
+                    <div class="flex gap-3 text-emerald-600 pt-1">
+                      ${v.clinicaTelefone ? `<span>📞 ${v.clinicaTelefone}</span>` : ''}
+                      ${v.clinicaSite ? `<a href="${v.clinicaSite.startsWith('http') ? v.clinicaSite : 'https://' + v.clinicaSite}" target="_blank" class="hover:underline">🌐 Website</a>` : ''}
+                    </div>
+                  ` : ''}
+                </div>
+              ` : ''}
+
+              ${vetNome !== '-' ? `
+                <div class="col-span-1 sm:col-span-2 bg-slate-50 p-2.5 rounded-lg">
+                  <strong>Vet:</strong> ${vetNome}${vetEspecialidade}${vetCrmv}
+                </div>
+              ` : ''}
             </div>
 
             ${v.dataProxima ? `
@@ -421,7 +497,6 @@
           container.appendChild(card);
         });
 
-        // Editar Vacina
         document.querySelectorAll('.btn-editar-vacina').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const vacinaId = e.currentTarget.getAttribute('data-id');
@@ -433,7 +508,6 @@
           });
         });
 
-        // Deletar Vacina
         document.querySelectorAll('.btn-deletar-vacina').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const vacinaId = e.currentTarget.getAttribute('data-id');
@@ -446,7 +520,6 @@
           });
         });
 
-        // Lembrete Agenda
         document.querySelectorAll('.btn-agenda').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const nome = e.currentTarget.getAttribute('data-nome');
@@ -458,14 +531,12 @@
         });
       }
 
-      // Evento de Troca de Pet
       seletorPet.addEventListener('change', (e) => {
         petAtualId = e.target.value;
         salvarDados();
         renderizarPet();
       });
 
-      // Modais de Novo Pet
       btnAbrirModalPet.addEventListener('click', () => modalNovoPet.classList.remove('hidden'));
       btnFecharModalPet.addEventListener('click', () => modalNovoPet.classList.add('hidden'));
 
@@ -497,7 +568,6 @@
         formNovoPet.reset();
       });
 
-      // Excluir Pet Selecionado
       btnDeletarPet.addEventListener('click', () => {
         const pet = getPetAtivo();
         if (!pet) return;
@@ -510,7 +580,6 @@
         }
       });
 
-      // Edição de Pet Existente
       btnEditarPet.addEventListener('click', () => {
         const escondido = petForm.classList.contains('hidden');
         if (escondido) {
@@ -548,7 +617,6 @@
         }
       });
 
-      // Modais e Gestão de Vacinas
       function limparFormVacina() {
         document.getElementById('vac-id').value = '';
         document.getElementById('vac-nome').value = '';
@@ -556,6 +624,9 @@
         document.getElementById('vac-data-app').value = '';
         document.getElementById('vac-data-prox').value = '';
         document.getElementById('vac-local').value = '';
+        document.getElementById('vac-clinica-endereco').value = '';
+        document.getElementById('vac-clinica-telefone').value = '';
+        document.getElementById('vac-clinica-site').value = '';
         document.getElementById('vac-vet-nome').value = '';
         document.getElementById('vac-vet-especialidade').value = '';
         document.getElementById('vac-vet-crmv').value = '';
@@ -578,6 +649,9 @@
         document.getElementById('vac-data-app').value = vacina.dataAplicacao || '';
         document.getElementById('vac-data-prox').value = vacina.dataProxima || '';
         document.getElementById('vac-local').value = vacina.local || '';
+        document.getElementById('vac-clinica-endereco').value = vacina.clinicaEndereco || '';
+        document.getElementById('vac-clinica-telefone').value = vacina.clinicaTelefone || '';
+        document.getElementById('vac-clinica-site').value = vacina.clinicaSite || '';
         document.getElementById('vac-vet-nome').value = vacina.vetNome || vacina.medico || '';
         document.getElementById('vac-vet-especialidade').value = vacina.vetEspecialidade || '';
         document.getElementById('vac-vet-crmv').value = vacina.vetCrmv || '';
@@ -601,6 +675,9 @@
           dataAplicacao: document.getElementById('vac-data-app').value,
           dataProxima: document.getElementById('vac-data-prox').value,
           local: document.getElementById('vac-local').value,
+          clinicaEndereco: document.getElementById('vac-clinica-endereco').value,
+          clinicaTelefone: document.getElementById('vac-clinica-telefone').value,
+          clinicaSite: document.getElementById('vac-clinica-site').value,
           vetNome: document.getElementById('vac-vet-nome').value,
           vetEspecialidade: document.getElementById('vac-vet-especialidade').value,
           vetCrmv: document.getElementById('vac-vet-crmv').value
@@ -609,13 +686,11 @@
         if (!pet.vacinas) pet.vacinas = [];
 
         if (vacId) {
-          // Edição de vacina existente
           const index = pet.vacinas.findIndex(v => v.id === vacId);
           if (index !== -1) {
             pet.vacinas[index] = { ...pet.vacinas[index], ...vacData };
           }
         } else {
-          // Nova vacina
           pet.vacinas.unshift({ id: 'v-' + Date.now(), ...vacData });
         }
 
@@ -625,7 +700,6 @@
         limparFormVacina();
       });
 
-      // Gerador do arquivo de lembrete (.ics)
       function baixarEventoAgenda(nome, dataProx, local, medico) {
         const pet = getPetAtivo();
         const dataFormatada = dataProx.replace(/-/g, '');
@@ -650,7 +724,6 @@ END:VCALENDAR`;
         document.body.removeChild(link);
       }
 
-      // Execução Inicial
       atualizarSeletorPets();
       renderizarPet();
     });
