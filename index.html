@@ -15,36 +15,69 @@
     <header class="bg-emerald-600 text-white rounded-2xl p-6 shadow-lg flex justify-between items-center">
       <div>
         <h1 class="text-2xl font-bold">💉 Carteira de Vacinação Digital</h1>
-        <p class="text-emerald-100 text-sm mt-1">Gestão de saúde e histórico vacinal</p>
+        <p class="text-emerald-100 text-sm mt-1">Gestão de saúde e histórico vacinal dos pets</p>
       </div>
     </header>
 
-    <!-- Card do Pet -->
+    <!-- Seleção e Adição de Pets -->
+    <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <label for="seletor-pet" class="text-xs font-semibold text-slate-500 whitespace-nowrap">Selecionar Pet:</label>
+        <select id="seletor-pet" class="w-full sm:w-auto border border-slate-200 p-2 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50"></select>
+      </div>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="btn-abrir-modal-pet" type="button" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-3.5 py-2 rounded-xl transition flex items-center justify-center gap-1 shadow">
+          🐾 + Adicionar Novo Pet
+        </button>
+        <button id="btn-deletar-pet" type="button" class="text-xs text-red-500 hover:bg-red-50 p-2 rounded-xl transition border border-red-100" title="Excluir Pet Selecionado">
+          🗑️
+        </button>
+      </div>
+    </div>
+
+    <!-- Card do Pet Selecionado -->
     <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
       <div class="flex justify-between items-start mb-4">
-        <h2 class="text-xl font-bold text-slate-700">🐶 Dados do Paciente</h2>
+        <h2 id="titulo-pet" class="text-xl font-bold text-slate-700">🐶 Dados do Paciente</h2>
         <button id="btn-editar-pet" type="button" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-lg transition">
           Editar Dados
         </button>
       </div>
 
       <!-- Visualização dos Dados -->
-      <div id="pet-view" class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
-        <div><span class="text-slate-400 block text-xs">Nome</span><strong id="v-nome">-</strong></div>
-        <div><span class="text-slate-400 block text-xs">Espécie / Raça</span><strong id="v-raca">-</strong></div>
-        <div><span class="text-slate-400 block text-xs">Sexo</span><strong id="v-sexo">-</strong></div>
-        <div><span class="text-slate-400 block text-xs">Microchip</span><strong id="v-microchip">-</strong></div>
-        <div><span class="text-slate-400 block text-xs">Tutor</span><strong id="v-tutor">-</strong></div>
+      <div id="pet-view" class="space-y-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
+          <div><span class="text-slate-400 block text-xs">Nome</span><strong id="v-nome">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Espécie / Raça</span><strong id="v-raca">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Sexo</span><strong id="v-sexo">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Cor / Pelagem</span><strong id="v-cor">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Peso</span><strong id="v-peso">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Nascimento</span><strong id="v-nascimento">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Idade</span><strong id="v-idade">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Microchip</span><strong id="v-microchip">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Tutor</span><strong id="v-tutor">-</strong></div>
+          <div><span class="text-slate-400 block text-xs">Perfil Social</span><strong id="v-perfil-social">-</strong></div>
+        </div>
       </div>
 
       <!-- Formulário de Edição do Pet -->
       <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-2">
         <label class="block">Nome: <input id="f-nome" class="w-full border p-2 rounded-lg" required /></label>
-        <label class="block">Espécie: <input id="f-especie" class="w-full border p-2 rounded-lg" required /></label>
+        <label class="block">Espécie: 
+          <select id="f-especie" class="w-full border p-2 rounded-lg bg-white" required>
+            <option value="Canina">Cão 🐶</option>
+            <option value="Felina">Gato 🐱</option>
+          </select>
+        </label>
         <label class="block">Raça: <input id="f-raca" class="w-full border p-2 rounded-lg" required /></label>
         <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2 rounded-lg" required /></label>
+        <label class="block">Cor / Pelagem: <input id="f-cor" placeholder="Ex: Dourado, Pretinha, Creme" class="w-full border p-2 rounded-lg" /></label>
+        <label class="block">Peso (kg): <input id="f-peso" placeholder="Ex: 3.5" class="w-full border p-2 rounded-lg" /></label>
+        <label class="block">Data de Nascimento: <input id="f-nascimento" type="date" class="w-full border p-2 rounded-lg" /></label>
         <label class="block">Microchip: <input id="f-microchip" class="w-full border p-2 rounded-lg" /></label>
         <label class="block">Tutor: <input id="f-tutor" class="w-full border p-2 rounded-lg" /></label>
+        <label class="block">Perfil Social (Instagram/Redes): <input id="f-perfil-social" placeholder="Ex: @theo_pet" class="w-full border p-2 rounded-lg" /></label>
+
         <div class="sm:col-span-2 text-right mt-2">
           <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-xs hover:bg-emerald-700">Salvar Alterações</button>
         </div>
@@ -64,6 +97,52 @@
       <div id="lista-vacinas" class="space-y-4"></div>
     </div>
 
+  </div>
+
+  <!-- Modal Adicionar Novo Pet -->
+  <div id="modal-novo-pet" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">Novo Pet</h3>
+      <form id="form-novo-pet" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome do Pet *</label>
+          <input id="np-nome" required placeholder="Ex: Theo, Jade, Neném..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Espécie *</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="border p-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 border-slate-200">
+              <input type="radio" name="np-especie" value="Canina" checked class="accent-emerald-600"> 🐶 Cão
+            </label>
+            <label class="border p-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 border-slate-200">
+              <input type="radio" name="np-especie" value="Felina" class="accent-emerald-600"> 🐱 Gato
+            </label>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Raça *</label>
+            <input id="np-raca" required placeholder="Ex: Chihuahua, Vira-lata..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Sexo *</label>
+            <select id="np-sexo" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+              <option value="Macho">Macho</option>
+              <option value="Fêmea">Fêmea</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Tutor</label>
+          <input id="np-tutor" placeholder="Ex: Arlindo Santos" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button id="btn-fechar-modal-pet" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-medium py-2.5 rounded-xl hover:bg-emerald-700">Cadastrar Pet</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Modal Nova Vacina -->
@@ -106,103 +185,164 @@
     </div>
   </div>
 
-  <!-- Lógica da Aplicação (JavaScript Incorporado) -->
+  <!-- Lógica da Aplicação (JavaScript) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Dados padrão para carga inicial
-      const petPadrao = {
-        nome: "Theo",
-        especie: "Canina",
-        raca: "Chihuahua",
-        sexo: "Macho",
-        microchip: "963003100111144",
-        tutor: "Arlindo Santos"
-      };
-
-      const vacinasPadrao = [
+      const petsPadrao = [
         {
-          id: "1",
-          nome: "Canigen R",
-          descricao: "Vacina contra Raiva canina.",
-          dataAplicacao: "2024-07-26",
-          dataProxima: "2025-07-26",
-          local: "Clínica VetVida",
-          medico: "Dra. Racema Paulino dos Santos (CRMV-PE 3260)"
+          id: "pet-1",
+          nome: "Theo",
+          especie: "Canina",
+          raca: "Chihuahua",
+          sexo: "Macho",
+          cor: "Creme",
+          peso: "2.8",
+          nascimento: "2020-05-10",
+          microchip: "963003100111144",
+          tutor: "Arlindo Santos",
+          perfilSocial: "@theo_pet",
+          vacinas: [
+            {
+              id: "v1",
+              nome: "Canigen R",
+              descricao: "Vacina contra Raiva canina.",
+              dataAplicacao: "2024-07-26",
+              dataProxima: "2025-07-26",
+              local: "Clínica VetVida",
+              medico: "Dra. Racema Paulino dos Santos (CRMV-PE 3260)"
+            }
+          ]
         }
       ];
 
-      // Inicializa variáveis do localStorage
-      let petInfo = JSON.parse(localStorage.getItem('pet_info')) || petPadrao;
-      let vacinas = JSON.parse(localStorage.getItem('pet_vacinas')) || vacinasPadrao;
+      // Estado dos dados armazenados
+      let pets = JSON.parse(localStorage.getItem('pets_app')) || petsPadrao;
+      let petAtualId = localStorage.getItem('pet_atual_id') || (pets[0] ? pets[0].id : null);
 
       // Elementos do DOM
+      const seletorPet = document.getElementById('seletor-pet');
+      const btnAbrirModalPet = document.getElementById('btn-abrir-modal-pet');
+      const btnFecharModalPet = document.getElementById('btn-fechar-modal-pet');
+      const modalNovoPet = document.getElementById('modal-novo-pet');
+      const formNovoPet = document.getElementById('form-novo-pet');
+      const btnDeletarPet = document.getElementById('btn-deletar-pet');
+
       const btnEditarPet = document.getElementById('btn-editar-pet');
       const petView = document.getElementById('pet-view');
       const petForm = document.getElementById('pet-form');
+      const tituloPet = document.getElementById('titulo-pet');
+
       const btnAbrirModal = document.getElementById('btn-abrir-modal');
       const btnFecharModal = document.getElementById('btn-fechar-modal');
       const modalVacina = document.getElementById('modal-vacina');
       const formVacina = document.getElementById('form-vacina');
 
-      // Renderiza Pet
-      function renderizarPet() {
-        document.getElementById('v-nome').textContent = petInfo.nome;
-        document.getElementById('v-raca').textContent = `${petInfo.especie} (${petInfo.raca})`;
-        document.getElementById('v-sexo').textContent = petInfo.sexo;
-        document.getElementById('v-microchip').textContent = petInfo.microchip || '-';
-        document.getElementById('v-tutor').textContent = petInfo.tutor || '-';
-
-        document.getElementById('f-nome').value = petInfo.nome;
-        document.getElementById('f-especie').value = petInfo.especie;
-        document.getElementById('f-raca').value = petInfo.raca;
-        document.getElementById('f-sexo').value = petInfo.sexo;
-        document.getElementById('f-microchip').value = petInfo.microchip;
-        document.getElementById('f-tutor').value = petInfo.tutor;
+      // Auxiliar: Retorna Pet Ativo
+      function getPetAtivo() {
+        return pets.find(p => p.id === petAtualId) || pets[0];
       }
 
-      // Alterna edição do Pet
-      btnEditarPet.addEventListener('click', () => {
-        const escondido = petForm.classList.contains('hidden');
-        if (escondido) {
-          petForm.classList.remove('hidden');
-          petView.classList.add('hidden');
-          btnEditarPet.textContent = 'Cancelar';
-        } else {
-          petForm.classList.add('hidden');
-          petView.classList.remove('hidden');
-          btnEditarPet.textContent = 'Editar Dados';
+      // Auxiliar: Salva no localStorage
+      function salvarDados() {
+        localStorage.setItem('pets_app', JSON.stringify(pets));
+        if (petAtualId) localStorage.setItem('pet_atual_id', petAtualId);
+      }
+
+      // Auxiliar: Calcular Idade
+      function calcularIdade(dataNasc) {
+        if (!dataNasc) return '-';
+        const hoje = new Date();
+        const nasc = new Date(dataNasc + 'T00:00:00');
+        let anos = hoje.getFullYear() - nasc.getFullYear();
+        let meses = hoje.getMonth() - nasc.getMonth();
+
+        if (meses < 0 || (meses === 0 && hoje.getDate() < nasc.getDate())) {
+          anos--;
+          meses += 12;
         }
-      });
 
-      // Salva dados do Pet
-      petForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        petInfo = {
-          nome: document.getElementById('f-nome').value,
-          especie: document.getElementById('f-especie').value,
-          raca: document.getElementById('f-raca').value,
-          sexo: document.getElementById('f-sexo').value,
-          microchip: document.getElementById('f-microchip').value,
-          tutor: document.getElementById('f-tutor').value
-        };
-        localStorage.setItem('pet_info', JSON.stringify(petInfo));
-        renderizarPet();
-        petForm.classList.add('hidden');
-        petView.classList.remove('hidden');
-        btnEditarPet.textContent = 'Editar Dados';
-      });
+        if (anos === 0) {
+          return `${meses} ${meses === 1 ? 'mês' : 'meses'}`;
+        }
+        return `${anos} ${anos === 1 ? 'ano' : 'anos'}${meses > 0 ? ` e ${meses} m` : ''}`;
+      }
 
-      // Renderiza Vacinas
-      function renderizarVacinas() {
-        const container = document.getElementById('lista-vacinas');
-        container.innerHTML = '';
+      // Atualiza o Seletor de Pets
+      function atualizarSeletorPets() {
+        seletorPet.innerHTML = '';
+        if (pets.length === 0) {
+          seletorPet.innerHTML = '<option value="">Nenhum pet cadastrado</option>';
+          return;
+        }
+        pets.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          const emoji = p.especie === 'Felina' ? '🐱' : '🐶';
+          opt.textContent = `${emoji} ${p.nome}`;
+          if (p.id === petAtualId) opt.selected = true;
+          seletorPet.appendChild(opt);
+        });
+      }
 
-        if (vacinas.length === 0) {
-          container.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200">Nenhuma vacina registrada.</div>`;
+      // Renderiza os dados do Pet selecionado
+      function renderizarPet() {
+        const pet = getPetAtivo();
+        if (!pet) {
+          petView.innerHTML = '<div class="p-4 text-center text-slate-400">Nenhum pet cadastrado. Adicione um novo pet acima.</div>';
+          tituloPet.textContent = 'Dados do Paciente';
+          document.getElementById('lista-vacinas').innerHTML = '';
           return;
         }
 
-        vacinas.forEach(v => {
+        const emoji = pet.especie === 'Felina' ? '🐱' : '🐶';
+        tituloPet.textContent = `${emoji} Dados do Paciente: ${pet.nome}`;
+
+        document.getElementById('v-nome').textContent = pet.nome;
+        document.getElementById('v-raca').textContent = `${pet.especie === 'Felina' ? 'Felina' : 'Canina'} (${pet.raca})`;
+        document.getElementById('v-sexo').textContent = pet.sexo;
+        document.getElementById('v-cor').textContent = pet.cor || '-';
+        document.getElementById('v-peso').textContent = pet.peso ? `${pet.peso} kg` : '-';
+        document.getElementById('v-nascimento').textContent = pet.nascimento ? new Date(pet.nascimento + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+        document.getElementById('v-idade').textContent = calcularIdade(pet.nascimento);
+        document.getElementById('v-microchip').textContent = pet.microchip || '-';
+        document.getElementById('v-tutor').textContent = pet.tutor || '-';
+        
+        const socialEl = document.getElementById('v-perfil-social');
+        if (pet.perfilSocial) {
+          const user = pet.perfilSocial.replace('@', '');
+          socialEl.innerHTML = `<a href="https://instagram.com/${user}" target="_blank" class="text-emerald-600 hover:underline">${pet.perfilSocial}</a>`;
+        } else {
+          socialEl.textContent = '-';
+        }
+
+        // Preenche formulário de edição
+        document.getElementById('f-nome').value = pet.nome || '';
+        document.getElementById('f-especie').value = pet.especie || 'Canina';
+        document.getElementById('f-raca').value = pet.raca || '';
+        document.getElementById('f-sexo').value = pet.sexo || '';
+        document.getElementById('f-cor').value = pet.cor || '';
+        document.getElementById('f-peso').value = pet.peso || '';
+        document.getElementById('f-nascimento').value = pet.nascimento || '';
+        document.getElementById('f-microchip').value = pet.microchip || '';
+        document.getElementById('f-tutor').value = pet.tutor || '';
+        document.getElementById('f-perfil-social').value = pet.perfilSocial || '';
+
+        renderizarVacinas();
+      }
+
+      // Renderiza a Lista de Vacinas do Pet Ativo
+      function renderizarVacinas() {
+        const container = document.getElementById('lista-vacinas');
+        container.innerHTML = '';
+        const pet = getPetAtivo();
+
+        if (!pet || !pet.vacinas || pet.vacinas.length === 0) {
+          container.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200">Nenhuma vacina registrada para este pet.</div>`;
+          return;
+        }
+
+        pet.vacinas.forEach(v => {
           const card = document.createElement('div');
           card.className = "bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3";
 
@@ -215,7 +355,7 @@
                 <h3 class="text-lg font-bold text-slate-800">✅ ${v.nome}</h3>
                 ${v.descricao ? `<p class="text-xs text-slate-500 mt-0.5">${v.descricao}</p>` : ''}
               </div>
-              <button data-id="${v.id}" class="btn-deletar text-slate-300 hover:text-red-500 transition text-sm">🗑️</button>
+              <button data-id="${v.id}" class="btn-deletar-vacina text-slate-300 hover:text-red-500 transition text-sm">🗑️</button>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
@@ -246,17 +386,20 @@
           container.appendChild(card);
         });
 
-        // Eventos dos botões de deletar
-        document.querySelectorAll('.btn-deletar').forEach(btn => {
+        // Deletar Vacina
+        document.querySelectorAll('.btn-deletar-vacina').forEach(btn => {
           btn.addEventListener('click', (e) => {
-            const id = e.currentTarget.getAttribute('data-id');
-            vacinas = vacinas.filter(item => item.id !== id);
-            localStorage.setItem('pet_vacinas', JSON.stringify(vacinas));
-            renderizarVacinas();
+            const vacinaId = e.currentTarget.getAttribute('data-id');
+            const pet = getPetAtivo();
+            if (pet) {
+              pet.vacinas = pet.vacinas.filter(v => v.id !== vacinaId);
+              salvarDados();
+              renderizarVacinas();
+            }
           });
         });
 
-        // Eventos dos botões de agenda
+        // Lembrete Agenda
         document.querySelectorAll('.btn-agenda').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const nome = e.currentTarget.getAttribute('data-nome');
@@ -268,15 +411,113 @@
         });
       }
 
-      // Controle do Modal
-      btnAbrirModal.addEventListener('click', () => modalVacina.classList.remove('hidden'));
+      // Evento de Troca de Pet
+      seletorPet.addEventListener('change', (e) => {
+        petAtualId = e.target.value;
+        salvarDados();
+        renderizarPet();
+      });
+
+      // Modais de Novo Pet
+      btnAbrirModalPet.addEventListener('click', () => modalNovoPet.classList.remove('hidden'));
+      btnFecharModalPet.addEventListener('click', () => modalNovoPet.classList.add('hidden'));
+
+      formNovoPet.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const especieSel = document.querySelector('input[name="np-especie"]:checked').value;
+        
+        const novo = {
+          id: 'pet-' + Date.now(),
+          nome: document.getElementById('np-nome').value,
+          especie: especieSel,
+          raca: document.getElementById('np-raca').value,
+          sexo: document.getElementById('np-sexo').value,
+          tutor: document.getElementById('np-tutor').value,
+          cor: '',
+          peso: '',
+          nascimento: '',
+          microchip: '',
+          perfilSocial: '',
+          vacinas: []
+        };
+
+        pets.push(novo);
+        petAtualId = novo.id;
+        salvarDados();
+        atualizarSeletorPets();
+        renderizarPet();
+        modalNovoPet.classList.add('hidden');
+        formNovoPet.reset();
+      });
+
+      // Excluir Pet Selecionado
+      btnDeletarPet.addEventListener('click', () => {
+        const pet = getPetAtivo();
+        if (!pet) return;
+        if (confirm(`Tem certeza que deseja excluir o perfil de ${pet.nome}?`)) {
+          pets = pets.filter(p => p.id !== pet.id);
+          petAtualId = pets[0] ? pets[0].id : null;
+          salvarDados();
+          atualizarSeletorPets();
+          renderizarPet();
+        }
+      });
+
+      // Edição de Pet Existente
+      btnEditarPet.addEventListener('click', () => {
+        const escondido = petForm.classList.contains('hidden');
+        if (escondido) {
+          petForm.classList.remove('hidden');
+          petView.classList.add('hidden');
+          btnEditarPet.textContent = 'Cancelar';
+        } else {
+          petForm.classList.add('hidden');
+          petView.classList.remove('hidden');
+          btnEditarPet.textContent = 'Editar Dados';
+        }
+      });
+
+      petForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pet = getPetAtivo();
+        if (pet) {
+          pet.nome = document.getElementById('f-nome').value;
+          pet.especie = document.getElementById('f-especie').value;
+          pet.raca = document.getElementById('f-raca').value;
+          pet.sexo = document.getElementById('f-sexo').value;
+          pet.cor = document.getElementById('f-cor').value;
+          pet.peso = document.getElementById('f-peso').value;
+          pet.nascimento = document.getElementById('f-nascimento').value;
+          pet.microchip = document.getElementById('f-microchip').value;
+          pet.tutor = document.getElementById('f-tutor').value;
+          pet.perfilSocial = document.getElementById('f-perfil-social').value;
+
+          salvarDados();
+          atualizarSeletorPets();
+          renderizarPet();
+          petForm.classList.add('hidden');
+          petView.classList.remove('hidden');
+          btnEditarPet.textContent = 'Editar Dados';
+        }
+      });
+
+      // Modal e Cadastro de Vacinas
+      btnAbrirModal.addEventListener('click', () => {
+        if (!getPetAtivo()) {
+          alert('Cadastre um pet primeiro!');
+          return;
+        }
+        modalVacina.classList.remove('hidden');
+      });
       btnFecharModal.addEventListener('click', () => modalVacina.classList.add('hidden'));
 
-      // Adiciona Vacina
       formVacina.addEventListener('submit', (e) => {
         e.preventDefault();
+        const pet = getPetAtivo();
+        if (!pet) return;
+
         const nova = {
-          id: Date.now().toString(),
+          id: 'v-' + Date.now(),
           nome: document.getElementById('vac-nome').value,
           descricao: document.getElementById('vac-desc').value,
           dataAplicacao: document.getElementById('vac-data-app').value,
@@ -285,22 +526,24 @@
           medico: document.getElementById('vac-medico').value
         };
 
-        vacinas.unshift(nova);
-        localStorage.setItem('pet_vacinas', JSON.stringify(vacinas));
+        if (!pet.vacinas) pet.vacinas = [];
+        pet.vacinas.unshift(nova);
+        salvarDados();
         renderizarVacinas();
         modalVacina.classList.add('hidden');
         formVacina.reset();
       });
 
-      // Baixar evento .ics
+      // Gerador do arquivo de lembrete (.ics)
       function baixarEventoAgenda(nome, dataProx, local, medico) {
+        const pet = getPetAtivo();
         const dataFormatada = dataProx.replace(/-/g, '');
         const icsData = 
 `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Carteira Vacina Pet//PT
 BEGIN:VEVENT
-SUMMARY:Reforço Vacina ${nome} - ${petInfo.nome}
+SUMMARY:Reforço Vacina ${nome} - ${pet ? pet.nome : 'Pet'}
 DESCRIPTION:Vacina: ${nome}\\nMédico: ${medico}\\nLocal: ${local}
 DTSTART:${dataFormatada}T090000Z
 DTEND:${dataFormatada}T100000Z
@@ -316,9 +559,9 @@ END:VCALENDAR`;
         document.body.removeChild(link);
       }
 
-      // Renderização Inicial
+      // Execução Inicial
+      atualizarSeletorPets();
       renderizarPet();
-      renderizarVacinas();
     });
   </script>
 </body>
