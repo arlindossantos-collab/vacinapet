@@ -43,7 +43,7 @@
       </div>
     </header>
 
-    <!-- Seleção e Adição de Pets (Otimizado para Mobile) -->
+    <!-- Seleção e Adição de Pets -->
     <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200 flex flex-col gap-3">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
@@ -114,7 +114,6 @@
         <label class="block">Raça: <input id="f-raca" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
         <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
         
-        <!-- Personalização da Pelagem / Cor e Textura -->
         <label class="block">Cor Base da Pelagem: 
           <select id="f-cor-base" class="w-full border p-2.5 rounded-lg bg-white text-sm">
             <option value="#d97706">Caramelo / Castanho</option>
@@ -141,7 +140,6 @@
         <label class="block">Data de Nascimento: <input id="f-nascimento" type="date" class="w-full border p-2.5 rounded-lg text-sm" /></label>
         <label class="block sm:col-span-2">Microchip: <input id="f-microchip" class="w-full border p-2.5 rounded-lg text-sm" /></label>
         
-        <!-- Tutores Separados -->
         <label class="block sm:col-span-2">⭐ Tutor Principal (Obrigatório): <input id="f-tutor-principal" placeholder="Ex: Arlindo Santos" class="w-full border p-2.5 rounded-lg font-semibold text-sm" required /></label>
         <label class="block sm:col-span-2">Outros Tutores (Separe por vírgula): <input id="f-tutores-outros" placeholder="Ex: Idylla Santos, Maria Eduarda" class="w-full border p-2.5 rounded-lg text-sm" /></label>
         
@@ -272,8 +270,8 @@
         <div class="border-t border-slate-100 pt-3 space-y-2">
           <span class="block font-bold text-slate-800">🏥 Clínica / Local de Aplicação</span>
           <div>
-            <label class="block text-slate-500 mb-1">Nome da Clínica (Busca no Google Maps)</label>
-            <input id="vac-local" placeholder="Ex: Clínica VetVida..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+            <label class="block text-slate-500 mb-1">Nome da Clínica</label>
+            <input id="vac-local" placeholder="Ex: Clínica VetVida..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" autocomplete="off" />
           </div>
           <div>
             <label class="block text-slate-500 mb-1">Endereço Completo</label>
@@ -321,26 +319,34 @@
   <!-- Lógica da Aplicação (JavaScript) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Configuração Google Places Autocomplete
+      // Inicialização defensiva do Autocomplete do Google Places
       let autocomplete;
       function initGoogleAutocomplete() {
         const inputClinica = document.getElementById('vac-local');
-        if (window.google && window.google.maps && window.google.maps.places) {
-          autocomplete = new google.maps.places.Autocomplete(inputClinica, {
-            types: ['establishment'],
-            fields: ['name', 'formatted_address', 'formatted_phone_number', 'website']
-          });
+        if (!inputClinica) return;
 
-          autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace();
-            if (place.name) document.getElementById('vac-local').value = place.name;
-            if (place.formatted_address) document.getElementById('vac-clinica-endereco').value = place.formatted_address;
-            if (place.formatted_phone_number) document.getElementById('vac-clinica-telefone').value = place.formatted_phone_number;
-            if (place.website) document.getElementById('vac-clinica-site').value = place.website;
-          });
+        try {
+          if (window.google && window.google.maps && window.google.maps.places) {
+            autocomplete = new google.maps.places.Autocomplete(inputClinica, {
+              types: ['establishment'],
+              fields: ['name', 'formatted_address', 'formatted_phone_number', 'website']
+            });
+
+            autocomplete.addListener('place_changed', () => {
+              const place = autocomplete.getPlace();
+              if (place) {
+                if (place.name) document.getElementById('vac-local').value = place.name;
+                if (place.formatted_address) document.getElementById('vac-clinica-endereco').value = place.formatted_address;
+                if (place.formatted_phone_number) document.getElementById('vac-clinica-telefone').value = place.formatted_phone_number;
+                if (place.website) document.getElementById('vac-clinica-site').value = place.website;
+              }
+            });
+          }
+        } catch (e) {
+          console.log("Autocomplete do Google suspenso. Edição manual liberada.");
         }
       }
-      setTimeout(initGoogleAutocomplete, 1200);
+      setTimeout(initGoogleAutocomplete, 1000);
 
       // Dados padrão
       const petsPadrao = [
@@ -427,7 +433,6 @@
         return `${anos} ${anos === 1 ? 'ano' : 'anos'}${meses > 0 ? ` e ${meses} m` : ''}`;
       }
 
-      // Atualizar o Seletor de Pets
       function atualizarSeletorPets() {
         seletorPet.innerHTML = '';
         if (pets.length === 0) {
@@ -444,7 +449,6 @@
         });
       }
 
-      // Renderizar o Pet Ativo
       function renderizarPet() {
         const pet = getPetAtivo();
         if (!pet) {
@@ -457,7 +461,6 @@
         const emoji = pet.especie === 'Felina' ? '🐱' : '🐶';
         tituloPet.textContent = `${pet.nome}`;
 
-        // Personalização visual do Ícone/Avatar
         const corBase = pet.corBase || '#f3f4f6';
         avatarPetDisplay.style.backgroundColor = corBase;
         avatarPetDisplay.textContent = emoji;
@@ -472,7 +475,6 @@
         document.getElementById('v-idade').textContent = calcularIdade(pet.nascimento);
         document.getElementById('v-microchip').textContent = pet.microchip || '-';
         
-        // Exibição dos Tutores
         document.getElementById('v-tutor-principal').innerHTML = `⭐ Principal: <strong>${pet.tutorPrincipal || pet.tutor || '-'}</strong>`;
         const outrosContainer = document.getElementById('v-tutores-outros');
         outrosContainer.innerHTML = '';
@@ -494,7 +496,6 @@
           socialEl.textContent = '-';
         }
 
-        // Formulário de edição
         document.getElementById('f-nome').value = pet.nome || '';
         document.getElementById('f-especie').value = pet.especie || 'Canina';
         document.getElementById('f-raca').value = pet.raca || '';
@@ -511,7 +512,6 @@
         renderizarVacinas();
       }
 
-      // Renderizar Vacinas
       function renderizarVacinas() {
         const container = document.getElementById('lista-vacinas');
         container.innerHTML = '';
@@ -623,14 +623,12 @@
         });
       }
 
-      // Evento de Troca de Pet (Garante funcionamento no mobile)
       seletorPet.addEventListener('change', (e) => {
         petAtualId = e.target.value;
         salvarDados();
         renderizarPet();
       });
 
-      // Modais Novo Pet
       btnAbrirModalPet.addEventListener('click', () => modalNovoPet.classList.remove('hidden'));
       btnFecharModalPet.addEventListener('click', () => modalNovoPet.classList.add('hidden'));
 
