@@ -469,23 +469,45 @@
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Status da Vacina *</label>
-          <select id="vac-status" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm font-semibold">
-            <option value="aplicada">🟢 Já Aplicada / Concluída</option>
-            <option value="pendente">⏳ Pendente / Agendada para o futuro</option>
-          </select>
-        </div>
-        
-        <div>
           <label class="block font-semibold text-slate-700 mb-1">Descrição / Indicação</label>
           <textarea id="vac-desc" rows="2" placeholder="O que esta vacina previne..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
+        </div>
+
+        <!-- Ciclo Concluído SIM/NÃO -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+          <label class="block font-semibold text-slate-700">Ciclo de imunização concluído? *</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="border p-2 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-white border-slate-200 font-bold text-xs">
+              <input type="radio" name="vac-ciclo-concluido" value="sim" class="accent-emerald-600"> 🟢 SIM
+            </label>
+            <label class="border p-2 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-white border-slate-200 font-bold text-xs">
+              <input type="radio" name="vac-ciclo-concluido" value="nao" checked class="accent-emerald-600"> ⏳ NÃO
+            </label>
+          </div>
+        </div>
+
+        <!-- Datas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Dose Inicial (Primeira vez)</label>
+            <input id="vac-dose-inicial" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Última Dose Aplicada</label>
+            <input id="vac-ultima-dose" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+        </div>
+
+        <!-- Próxima Dose -->
+        <div id="box-data-prox">
+          <label class="block font-semibold text-slate-700 mb-1">Próxima Dose Agendada</label>
+          <input id="vac-data-prox" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <!-- Seletor de Médico & Clínica Cadastrados -->
         <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200/60 space-y-3">
           <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1">🩺 Dados da Aplicação & Responsáveis</h4>
           
-          <!-- Bloco Médico Veterinário -->
           <div class="space-y-1.5">
             <label class="block font-semibold text-slate-700 text-[11px]">Selecionar Médico Veterinário Cadastrado:</label>
             <select id="vac-seletor-medico" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs font-semibold">
@@ -506,7 +528,6 @@
 
           <hr class="border-emerald-200/50" />
 
-          <!-- Bloco Clínica/Hospital -->
           <div class="space-y-1.5">
             <label class="block font-semibold text-slate-700 text-[11px]">Selecionar Clínica/Hospital Cadastrado:</label>
             <select id="vac-seletor-clinica" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs font-semibold">
@@ -525,26 +546,6 @@
             </div>
           </div>
 
-        </div>
-
-        <!-- Opção de Dose Única / Ciclo Concluído -->
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-700">
-            <input type="checkbox" id="vac-dose-unica" class="w-4 h-4 accent-emerald-600 rounded">
-            <span>Dose única / Ciclo de imunização finalizado</span>
-          </label>
-          <p class="text-[11px] text-slate-500 leading-tight mt-1">Marque caso o esquema vacinal tenha sido concluído sem necessidade de novas doses.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div>
-            <label id="lbl-vac-data-app" class="block font-semibold text-slate-700 mb-1">Data Aplicação *</label>
-            <input id="vac-data-app" required type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-          </div>
-          <div id="box-data-prox">
-            <label class="block font-semibold text-slate-700 mb-1">Próxima Dose</label>
-            <input id="vac-data-prox" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-          </div>
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -649,9 +650,6 @@
     const vacNomeManual = document.getElementById('vac-nome-manual');
     const boxVacNomeManual = document.getElementById('box-vac-nome-manual');
     const vacDesc = document.getElementById('vac-desc');
-    const vacStatus = document.getElementById('vac-status');
-    const lblVacDataApp = document.getElementById('lbl-vac-data-app');
-    const chkDoseUnica = document.getElementById('vac-dose-unica');
     const boxDataProx = document.getElementById('box-data-prox');
     
     const vacSeletorMedico = document.getElementById('vac-seletor-medico');
@@ -683,25 +681,18 @@
       abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm whitespace-nowrap";
     });
 
+    document.querySelectorAll('input[name="vac-ciclo-concluido"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        boxDataProx.classList.toggle('hidden', e.target.value === 'sim');
+      });
+    });
+
     document.getElementById('np-cor-base').addEventListener('change', (e) => {
       document.getElementById('box-np-cor-outra').classList.toggle('hidden', e.target.value !== 'Outra');
     });
 
     document.getElementById('f-cor-base').addEventListener('change', (e) => {
       document.getElementById('box-f-cor-outra').classList.toggle('hidden', e.target.value !== 'Outra');
-    });
-
-    vacStatus.addEventListener('change', () => {
-      lblVacDataApp.textContent = vacStatus.value === 'pendente' ? 'Data Agendada *' : 'Data Aplicação *';
-    });
-
-    chkDoseUnica.addEventListener('change', () => {
-      if (chkDoseUnica.checked) {
-        boxDataProx.classList.add('hidden');
-        document.getElementById('vac-data-prox').value = '';
-      } else {
-        boxDataProx.classList.remove('hidden');
-      }
     });
 
     vacSelecao.addEventListener('change', () => {
@@ -724,7 +715,6 @@
       }
     });
 
-    // Eventos de Seleção Inteligente no Modal da Vacina
     vacSeletorMedico.addEventListener('change', () => {
       const id = vacSeletorMedico.value;
       const m = medicos.find(item => item.id === id);
@@ -782,7 +772,6 @@
       if (!currentUser) return;
       const userKey = getEmailChave();
 
-      // 1. Ouvir Pets
       database.ref('familias_pets').on('value', (snapshot) => {
         const val = snapshot.val();
         pets = [];
@@ -802,7 +791,6 @@
         renderizarPet();
       });
 
-      // 2. Ouvir Médicos
       database.ref(`cadastros_compartilhados/${userKey}/medicos`).on('value', (snapshot) => {
         const val = snapshot.val();
         medicos = [];
@@ -813,7 +801,6 @@
         atualizarSeletorMedicosNoModalVacina();
       });
 
-      // 3. Ouvir Clínicas
       database.ref(`cadastros_compartilhados/${userKey}/clinicas`).on('value', (snapshot) => {
         const val = snapshot.val();
         clinicas = [];
@@ -928,7 +915,6 @@
       renderizarPet();
     }
 
-    // Renderização dos Médicos
     function renderizarListaMedicos() {
       const container = document.getElementById('lista-medicos');
       container.innerHTML = '';
@@ -972,7 +958,6 @@
       });
     }
 
-    // Renderização das Clínicas
     function renderizarListaClinicas() {
       const container = document.getElementById('lista-clinicas');
       container.innerHTML = '';
@@ -1123,6 +1108,16 @@
       renderizarVacinas();
     }
 
+    function gerarLinkGoogleAgenda(vacina, nomePet) {
+      if (!vacina.dataProxima) return '#';
+      const dataFormatada = vacina.dataProxima.replace(/-/g, '');
+      const titulo = encodeURIComponent(`💉 Aplicação Vacina: ${vacina.nome} (${nomePet})`);
+      const detalhes = encodeURIComponent(`Lembrete de vacinação para ${nomePet}.\n\nVacina: ${vacina.nome}\nMédico: ${vacina.vetNome || '-'}\nLocal: ${vacina.clinicaNome || '-'}`);
+      const local = encodeURIComponent(vacina.clinicaEndereco || vacina.clinicaNome || '');
+      
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${dataFormatada}/${dataFormatada}&details=${detalhes}&location=${local}`;
+    }
+
     function renderizarVacinas() {
       const container = document.getElementById('lista-vacinas');
       container.innerHTML = '';
@@ -1140,107 +1135,61 @@
 
       vacinasLista.forEach(v => {
         const card = document.createElement('div');
-        const isPendente = v.status === 'pendente';
-        const dataAppStr = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+        const dtInicialStr = v.doseInicial ? new Date(v.doseInicial + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+        const dtUltimaStr = v.ultimaDose ? new Date(v.ultimaDose + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
 
-        let proxHtml = '';
-        let appHtml = '';
+        let statusHtml = '';
         let cardBgBorder = "bg-white border-slate-200";
+        let acaoAgendaHtml = '';
 
-        if (isPendente) {
-          const dtAgendada = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00') : null;
-          let diffDias = 0;
-          if (dtAgendada) {
-            const diffTempo = dtAgendada.getTime() - hoje.getTime();
-            diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
-          }
+        if (v.cicloConcluido) {
+          statusHtml = `
+            <div class="col-span-1 sm:col-span-2 bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-900 flex items-center gap-2">
+              <span class="text-lg">✅</span>
+              <div>
+                <span class="block text-emerald-700 font-bold text-xs uppercase tracking-wider">Status</span>
+                <strong class="text-sm">Ciclo de imunização concluído</strong>
+              </div>
+            </div>
+          `;
+        } else if (v.dataProxima) {
+          const dtProx = new Date(v.dataProxima + 'T00:00:00');
+          const diffTempo = dtProx.getTime() - hoje.getTime();
+          const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
+          const dtProxStr = dtProx.toLocaleDateString('pt-BR');
 
-          appHtml = `
-            <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-amber-900">
-              <span class="block text-amber-700 font-semibold">Status</span>
-              <strong>⏳ Agendada (${dataAppStr})</strong>
+          let msgDias = `Faltam ${diffDias} dias`;
+          if (diffDias === 0) msgDias = "🚨 APLICAR HOJE!";
+          else if (diffDias < 0) msgDias = `⚠️ Atrasada há ${Math.abs(diffDias)} dias`;
+
+          if (diffDias < 0) cardBgBorder = "bg-amber-50/40 border-amber-300";
+          else if (diffDias === 0) cardBgBorder = "bg-red-50/60 border-red-300";
+
+          statusHtml = `
+            <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500 font-semibold text-xs">Próxima Dose Agendada:</span>
+                <span class="font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-emerald-700'}">${dtProxStr}</span>
+              </div>
+              <div class="text-xs font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-slate-700'}">
+                ⏳ ${msgDias}
+              </div>
             </div>
           `;
 
-          if (diffDias < 0) {
-            cardBgBorder = "bg-red-50/40 border-red-200";
-            proxHtml = `
-              <div class="bg-red-100 p-2.5 rounded-lg border border-red-200 text-red-900">
-                <span class="block text-red-600 font-bold">Aviso de Agendamento</span>
-                <strong>⚠️ Não realizada (Era para ${dataAppStr})</strong>
-              </div>
-            `;
-          } else if (diffDias === 0) {
-            cardBgBorder = "bg-amber-50/80 border-amber-300";
-            proxHtml = `
-              <div class="bg-amber-500 text-white p-2.5 rounded-lg font-bold">
-                <span class="block text-amber-100 text-[11px]">Agendada para</span>
-                🚨 HOJE! (${dataAppStr})
-              </div>
-            `;
-          } else {
-            proxHtml = `
-              <div class="bg-blue-50 p-2.5 rounded-lg border border-blue-200 text-blue-900">
-                <span class="block text-blue-700 font-bold">Contagem Regressiva</span>
-                <strong>Faltam ${diffDias} dias para aplicar</strong>
-              </div>
-            `;
-          }
-
+          const linkAgenda = gerarLinkGoogleAgenda(v, pet.nome);
+          acaoAgendaHtml = `
+            <a href="${linkAgenda}" target="_blank" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 border border-blue-200 shadow-sm mt-1">
+              📅 Adicionar Lembrete no Google Agenda
+            </a>
+          `;
         } else {
-          // Vacina já tomada (Aplicada)
-          appHtml = `
-            <div class="bg-slate-50 p-2.5 rounded-lg">
-              <span class="block text-slate-400">Data de Aplicação</span>
-              <strong class="text-slate-800">🟢 ${dataAppStr}</strong>
+          statusHtml = `
+            <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <span class="block text-slate-400 text-xs">Status</span>
+              <strong class="text-slate-700 text-xs">Sem próxima dose agendada</strong>
             </div>
           `;
-
-          if (v.doseUnica) {
-            proxHtml = `
-              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
-                <span class="block text-emerald-700 font-semibold">Status da Imunização</span>
-                <strong class="text-emerald-900">Ciclo de imunização concluído ✅</strong>
-              </div>
-            `;
-          } else if (v.dataProxima) {
-            const dtProx = new Date(v.dataProxima + 'T00:00:00');
-            const diffTempo = dtProx.getTime() - hoje.getTime();
-            const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
-            const dataProxStr = dtProx.toLocaleDateString('pt-BR');
-
-            if (diffDias < 0) {
-              cardBgBorder = "bg-amber-50/40 border-amber-200";
-              proxHtml = `
-                <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-200 text-amber-900">
-                  <span class="block text-amber-700 font-bold">Repetição do Ciclo</span>
-                  <strong>A próxima dose deveria ter sido aplicada em ${dataProxStr} (Atrasada)</strong>
-                </div>
-              `;
-            } else if (diffDias === 0) {
-              cardBgBorder = "bg-red-50/60 border-red-300";
-              proxHtml = `
-                <div class="bg-red-500 text-white p-2.5 rounded-lg font-bold">
-                  <span class="block text-red-100 text-[11px]">Repetição do Ciclo</span>
-                  🚨 A próxima dose deverá ser aplicada HOJE! (${dataProxStr})
-                </div>
-              `;
-            } else {
-              proxHtml = `
-                <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
-                  <span class="block text-emerald-700 font-bold">Repetição do Ciclo</span>
-                  <strong>A próxima dose deverá ser aplicada em ${dataProxStr}</strong>
-                </div>
-              `;
-            }
-          } else {
-            proxHtml = `
-              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
-                <span class="block text-emerald-700 font-semibold">Status da Imunização</span>
-                <strong class="text-emerald-900">Ciclo de imunização concluído ✅</strong>
-              </div>
-            `;
-          }
         }
 
         let vetInfoHtml = '';
@@ -1262,7 +1211,7 @@
         card.innerHTML = `
           <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
             <div>
-              <h3 class="text-base font-bold text-slate-800">${isPendente ? '⏳' : '✅'} ${v.nome}</h3>
+              <h3 class="text-base font-bold text-slate-800">💉 ${v.nome}</h3>
               ${v.descricao ? `<p class="text-xs text-slate-500 mt-0.5">${v.descricao}</p>` : ''}
             </div>
             <div class="flex items-center gap-2">
@@ -1271,12 +1220,20 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-            ${appHtml}
-            ${proxHtml}
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <span class="block text-slate-400 text-[10px] uppercase font-bold">Dose Inicial</span>
+              <strong class="text-slate-800">${dtInicialStr}</strong>
+            </div>
+            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <span class="block text-slate-400 text-[10px] uppercase font-bold">Última Dose</span>
+              <strong class="text-slate-800">${dtUltimaStr}</strong>
+            </div>
+            ${statusHtml}
           </div>
 
           ${vetInfoHtml}
+          ${acaoAgendaHtml}
         `;
 
         container.appendChild(card);
@@ -1546,10 +1503,12 @@
       vacNomeManual.value = '';
       boxVacNomeManual.classList.add('hidden');
       vacDesc.value = '';
-      vacStatus.value = 'aplicada';
-      lblVacDataApp.textContent = 'Data Aplicação *';
-      chkDoseUnica.checked = false;
-      document.getElementById('vac-data-app').value = '';
+      
+      const radioConcluidoNao = document.querySelector('input[name="vac-ciclo-concluido"][value="nao"]');
+      if (radioConcluidoNao) radioConcluidoNao.checked = true;
+
+      document.getElementById('vac-dose-inicial').value = '';
+      document.getElementById('vac-ultima-dose').value = '';
       document.getElementById('vac-data-prox').value = '';
       
       vacSeletorMedico.value = '';
@@ -1590,20 +1549,17 @@
         vacNomeManual.value = vacina.nome || '';
       }
 
-      vacStatus.value = vacina.status || 'aplicada';
-      lblVacDataApp.textContent = vacina.status === 'pendente' ? 'Data Agendada *' : 'Data Aplicação *';
       vacDesc.value = vacina.descricao || '';
       
-      const doseUnica = !!vacina.doseUnica;
-      chkDoseUnica.checked = doseUnica;
+      const isConcluido = !!vacina.cicloConcluido;
+      const radioValue = isConcluido ? 'sim' : 'nao';
+      const radioEl = document.querySelector(`input[name="vac-ciclo-concluido"][value="${radioValue}"]`);
+      if (radioEl) radioEl.checked = true;
 
-      if (doseUnica) {
-        boxDataProx.classList.add('hidden');
-      } else {
-        boxDataProx.classList.remove('hidden');
-      }
+      boxDataProx.classList.toggle('hidden', isConcluido);
 
-      document.getElementById('vac-data-app').value = vacina.dataAplicacao || '';
+      document.getElementById('vac-dose-inicial').value = vacina.doseInicial || '';
+      document.getElementById('vac-ultima-dose').value = vacina.ultimaDose || '';
       document.getElementById('vac-data-prox').value = vacina.dataProxima || '';
 
       document.getElementById('vac-vet-nome').value = vacina.vetNome || '';
@@ -1624,7 +1580,8 @@
       if (!pet) return;
 
       const vacId = document.getElementById('vac-id').value;
-      const isDoseUnica = chkDoseUnica.checked;
+      const cicloConcluidoVal = document.querySelector('input[name="vac-ciclo-concluido"]:checked').value;
+      const isCicloConcluido = cicloConcluidoVal === 'sim';
 
       let nomeVacinaFinal = vacSelecao.value;
       if (nomeVacinaFinal === 'outra' || !nomeVacinaFinal) {
@@ -1638,11 +1595,11 @@
 
       const vacData = {
         nome: nomeVacinaFinal,
-        status: vacStatus.value,
         descricao: vacDesc.value,
-        doseUnica: isDoseUnica,
-        dataAplicacao: document.getElementById('vac-data-app').value,
-        dataProxima: isDoseUnica ? '' : document.getElementById('vac-data-prox').value,
+        cicloConcluido: isCicloConcluido,
+        doseInicial: document.getElementById('vac-dose-inicial').value,
+        ultimaDose: document.getElementById('vac-ultima-dose').value,
+        dataProxima: isCicloConcluido ? '' : document.getElementById('vac-data-prox').value,
         vetNome: document.getElementById('vac-vet-nome').value,
         vetCrmv: document.getElementById('vac-vet-crmv').value,
         clinicaNome: document.getElementById('vac-clinica-nome').value,
