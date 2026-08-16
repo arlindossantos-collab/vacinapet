@@ -49,12 +49,15 @@
     <main id="app-content" class="hidden space-y-5">
 
       <!-- Navegação de Abas -->
-      <div class="flex border-b border-slate-200 gap-2 text-xs md:text-sm font-bold">
-        <button id="aba-tab-pets" type="button" class="py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm">
+      <div class="flex border-b border-slate-200 gap-2 text-xs md:text-sm font-bold overflow-x-auto">
+        <button id="aba-tab-pets" type="button" class="py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm whitespace-nowrap">
           🐾 Pacientes Pets
         </button>
-        <button id="aba-tab-clinicas" type="button" class="py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition">
-          🏥 Clínicas e Veterinários
+        <button id="aba-tab-medicos" type="button" class="py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+          🩺 Médicos Veterinários
+        </button>
+        <button id="aba-tab-clinicas" type="button" class="py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+          🏥 Clínicas e Hospitais
         </button>
       </div>
 
@@ -221,16 +224,33 @@
 
       </div>
 
-      <!-- PAINEL 2: CLÍNICAS E VETERINÁRIOS -->
+      <!-- PAINEL 2: MÉDICOS VETERINÁRIOS -->
+      <div id="painel-medicos" class="hidden space-y-5">
+        <div class="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">🩺 Médicos Veterinários</h2>
+              <p class="text-xs text-slate-500">Cadastre os profissionais para vinculação em vacinas.</p>
+            </div>
+            <button id="btn-abrir-modal-medico" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3.5 rounded-xl shadow transition">
+              + Cadastrar Médico
+            </button>
+          </div>
+
+          <div id="lista-medicos" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- PAINEL 3: CLÍNICAS E HOSPITAIS -->
       <div id="painel-clinicas" class="hidden space-y-5">
         <div class="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 space-y-4">
           <div class="flex justify-between items-center border-b border-slate-100 pb-3">
             <div>
-              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">🏥 Clínicas & Médicos Veterinários</h2>
-              <p class="text-xs text-slate-500">Cadastre para preencher dados de vacinas automaticamente.</p>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">🏥 Clínicas & Hospitais Veterinários</h2>
+              <p class="text-xs text-slate-500">Cadastre os locais de atendimento.</p>
             </div>
             <button id="btn-abrir-modal-clinica" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3.5 rounded-xl shadow transition">
-              + Cadastrar Local
+              + Cadastrar Clínica
             </button>
           </div>
 
@@ -380,37 +400,51 @@
     </div>
   </div>
 
+  <!-- Modal Cadastrar / Editar Médico Veterinário -->
+  <div id="modal-medico" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs md:text-sm">
+      <h3 id="modal-medico-titulo" class="text-lg font-bold text-slate-800">Cadastrar Médico Veterinário</h3>
+      <form id="form-medico" class="space-y-3">
+        <input type="hidden" id="med-id" />
+        
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nome do Médico Veterinário *</label>
+          <input id="med-nome" required placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">CRMV *</label>
+          <input id="med-crmv" required placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button id="btn-fechar-modal-medico" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Médico</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Cadastrar / Editar Clínica -->
   <div id="modal-clinica" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs md:text-sm">
-      <h3 id="modal-clinica-titulo" class="text-lg font-bold text-slate-800">Cadastrar Clínica / Veterinário</h3>
+      <h3 id="modal-clinica-titulo" class="text-lg font-bold text-slate-800">Cadastrar Clínica / Hospital</h3>
       <form id="form-clinica" class="space-y-3">
         <input type="hidden" id="cli-id" />
         
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Nome da Clínica / Hospital *</label>
-          <input id="cli-nome" required placeholder="Ex: Clínica Vet Vida" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Médico Veterinário</label>
-            <input id="cli-vet-nome" placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">CRMV</label>
-            <input id="cli-vet-crmv" placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-          </div>
+          <input id="cli-nome" required placeholder="Ex: Hospital Veterinário Vet Vida" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Endereço da Clínica</label>
+          <label class="block font-semibold text-slate-700 mb-1">Endereço Completo</label>
           <input id="cli-endereco" placeholder="Ex: Av. Boa Viagem, 1000 - Recife/PE" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div class="flex gap-2 pt-2">
           <button id="btn-fechar-modal-clinica" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
-          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Local</button>
+          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Clínica</button>
         </div>
       </form>
     </div>
@@ -447,37 +481,50 @@
           <textarea id="vac-desc" rows="2" placeholder="O que esta vacina previne..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
         </div>
 
-        <!-- Seletor de Clínica/Veterinário Pré-cadastrado -->
-        <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200/60 space-y-2">
-          <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1">🩺 Local & Veterinário Responsável</h4>
+        <!-- Seletor de Médico & Clínica Cadastrados -->
+        <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200/60 space-y-3">
+          <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1">🩺 Dados da Aplicação & Responsáveis</h4>
           
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Selecione da Lista de Cadastrados:</label>
-            <select id="vac-seletor-clinica" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs font-semibold">
-              <option value="">-- Selecione ou digite abaixo --</option>
+          <!-- Bloco Médico Veterinário -->
+          <div class="space-y-1.5">
+            <label class="block font-semibold text-slate-700 text-[11px]">Selecionar Médico Veterinário Cadastrado:</label>
+            <select id="vac-seletor-medico" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs font-semibold">
+              <option value="">-- Selecione um médico cadastrado --</option>
             </select>
-          </div>
 
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Médico Veterinário</label>
-              <input id="vac-vet-nome" placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <div>
+                <label class="block font-semibold text-slate-700 text-[10px]">Nome do Médico</label>
+                <input id="vac-vet-nome" placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 text-[10px]">CRMV</label>
+                <input id="vac-vet-crmv" placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+              </div>
             </div>
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1 text-[11px]">CRMV</label>
-              <input id="vac-vet-crmv" placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+          </div>
+
+          <hr class="border-emerald-200/50" />
+
+          <!-- Bloco Clínica/Hospital -->
+          <div class="space-y-1.5">
+            <label class="block font-semibold text-slate-700 text-[11px]">Selecionar Clínica/Hospital Cadastrado:</label>
+            <select id="vac-seletor-clinica" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs font-semibold">
+              <option value="">-- Selecione uma clínica cadastrada --</option>
+            </select>
+
+            <div class="space-y-1.5 pt-1">
+              <div>
+                <label class="block font-semibold text-slate-700 text-[10px]">Nome do Local</label>
+                <input id="vac-clinica-nome" placeholder="Ex: Hospital Vet Vida" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 text-[10px]">Endereço</label>
+                <input id="vac-clinica-endereco" placeholder="Ex: Av. Boa Viagem, 1000 - Recife/PE" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+              </div>
             </div>
           </div>
 
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Clínica / Hospital Veterinário</label>
-            <input id="vac-clinica-nome" placeholder="Ex: Clínica Vet Vida" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
-          </div>
-
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Endereço da Clínica</label>
-            <input id="vac-clinica-endereco" placeholder="Ex: Av. Boa Viagem, 1000 - Recife/PE" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
-          </div>
         </div>
 
         <!-- Checkbox para Histórico sem Alerta de Atraso -->
@@ -553,6 +600,7 @@
 
     let currentUser = null;
     let pets = [];
+    let medicos = [];
     let clinicas = [];
     let petAtualId = null;
 
@@ -565,8 +613,11 @@
     const appContent = document.getElementById('app-content');
 
     const abaTabPets = document.getElementById('aba-tab-pets');
+    const abaTabMedicos = document.getElementById('aba-tab-medicos');
     const abaTabClinicas = document.getElementById('aba-tab-clinicas');
+
     const painelPets = document.getElementById('painel-pets');
+    const painelMedicos = document.getElementById('painel-medicos');
     const painelClinicas = document.getElementById('painel-clinicas');
 
     const seletorPet = document.getElementById('seletor-pet');
@@ -585,6 +636,11 @@
     const avatarImg = document.getElementById('avatar-img');
     const badgeRaca = document.getElementById('badge-raca');
     const badgeComprimento = document.getElementById('badge-comprimento');
+
+    const modalMedico = document.getElementById('modal-medico');
+    const btnAbrirModalMedico = document.getElementById('btn-abrir-modal-medico');
+    const btnFecharModalMedico = document.getElementById('btn-fechar-modal-medico');
+    const formMedico = document.getElementById('form-medico');
 
     const modalClinica = document.getElementById('modal-clinica');
     const btnAbrirModalClinica = document.getElementById('btn-abrir-modal-clinica');
@@ -605,21 +661,34 @@
     const lblVacDataApp = document.getElementById('lbl-vac-data-app');
     const chkDoseUnica = document.getElementById('vac-dose-unica');
     const boxDataProx = document.getElementById('box-data-prox');
+    
+    const vacSeletorMedico = document.getElementById('vac-seletor-medico');
     const vacSeletorClinica = document.getElementById('vac-seletor-clinica');
 
     // Alternar Abas
+    function resetarEstiloAbas() {
+      [abaTabPets, abaTabMedicos, abaTabClinicas].forEach(aba => {
+        aba.className = "py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap";
+      });
+      [painelPets, painelMedicos, painelClinicas].forEach(painel => painel.classList.add('hidden'));
+    }
+
     abaTabPets.addEventListener('click', () => {
+      resetarEstiloAbas();
       painelPets.classList.remove('hidden');
-      painelClinicas.classList.add('hidden');
-      abaTabPets.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm";
-      abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition";
+      abaTabPets.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm whitespace-nowrap";
+    });
+
+    abaTabMedicos.addEventListener('click', () => {
+      resetarEstiloAbas();
+      painelMedicos.classList.remove('hidden');
+      abaTabMedicos.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm whitespace-nowrap";
     });
 
     abaTabClinicas.addEventListener('click', () => {
+      resetarEstiloAbas();
       painelClinicas.classList.remove('hidden');
-      painelPets.classList.add('hidden');
-      abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm";
-      abaTabPets.className = "py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition";
+      abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm whitespace-nowrap";
     });
 
     document.getElementById('np-cor-base').addEventListener('change', (e) => {
@@ -663,13 +732,20 @@
       }
     });
 
-    // Auto-preenchimento ao escolher uma clínica cadastrada no modal da vacina
+    // Eventos de Seleção Inteligente no Modal da Vacina
+    vacSeletorMedico.addEventListener('change', () => {
+      const id = vacSeletorMedico.value;
+      const m = medicos.find(item => item.id === id);
+      if (m) {
+        document.getElementById('vac-vet-nome').value = m.nome || '';
+        document.getElementById('vac-vet-crmv').value = m.crmv || '';
+      }
+    });
+
     vacSeletorClinica.addEventListener('change', () => {
       const id = vacSeletorClinica.value;
       const c = clinicas.find(item => item.id === id);
       if (c) {
-        document.getElementById('vac-vet-nome').value = c.vetNome || '';
-        document.getElementById('vac-vet-crmv').value = c.vetCrmv || '';
         document.getElementById('vac-clinica-nome').value = c.nome || '';
         document.getElementById('vac-clinica-endereco').value = c.endereco || '';
       }
@@ -697,6 +773,7 @@
       } else {
         currentUser = null;
         pets = [];
+        medicos = [];
         clinicas = [];
         userInfo.classList.add('hidden');
         btnLogin.classList.remove('hidden');
@@ -707,8 +784,7 @@
 
     function ouvirDatabaseNuvemCompartilhada() {
       // 1. Ouvir Pets
-      const familiasRef = database.ref('familias_pets');
-      familiasRef.on('value', (snapshot) => {
+      database.ref('familias_pets').on('value', (snapshot) => {
         const val = snapshot.val();
         pets = [];
         if (val && currentUser) {
@@ -728,15 +804,23 @@
         renderizarPet();
       });
 
-      // 2. Ouvir Clínicas
-      const clinicasRef = database.ref('clinicas_cadastradas');
-      clinicasRef.on('value', (snapshot) => {
+      // 2. Ouvir Médicos
+      database.ref('medicos_cadastrados').on('value', (snapshot) => {
+        const val = snapshot.val();
+        medicos = [];
+        if (val) {
+          Object.keys(val).forEach(k => medicos.push({ id: k, ...val[k] }));
+        }
+        renderizarListaMedicos();
+        atualizarSeletorMedicosNoModalVacina();
+      });
+
+      // 3. Ouvir Clínicas
+      database.ref('clinicas_cadastradas').on('value', (snapshot) => {
         const val = snapshot.val();
         clinicas = [];
         if (val) {
-          Object.keys(val).forEach(k => {
-            clinicas.push({ id: k, ...val[k] });
-          });
+          Object.keys(val).forEach(k => clinicas.push({ id: k, ...val[k] }));
         }
         renderizarListaClinicas();
         atualizarSeletorClinicasNoModalVacina();
@@ -781,14 +865,24 @@
       database.ref(`familias_pets/${petId}`).remove();
     }
 
-    function salvarClinicaNaNuvem(clinicaData) {
+    function salvarMedicoNaNuvem(data) {
       if (!currentUser) return;
-      database.ref(`clinicas_cadastradas/${clinicaData.id}`).set(clinicaData);
+      database.ref(`medicos_cadastrados/${data.id}`).set(data);
     }
 
-    function removerClinicaDaNuvem(clinicaId) {
+    function removerMedicoDaNuvem(id) {
       if (!currentUser) return;
-      database.ref(`clinicas_cadastradas/${clinicaId}`).remove();
+      database.ref(`medicos_cadastrados/${id}`).remove();
+    }
+
+    function salvarClinicaNaNuvem(data) {
+      if (!currentUser) return;
+      database.ref(`clinicas_cadastradas/${data.id}`).set(data);
+    }
+
+    function removerClinicaDaNuvem(id) {
+      if (!currentUser) return;
+      database.ref(`clinicas_cadastradas/${id}`).remove();
     }
 
     function getPetAtivo() {
@@ -832,23 +926,67 @@
       renderizarPet();
     }
 
+    // Renderização dos Médicos
+    function renderizarListaMedicos() {
+      const container = document.getElementById('lista-medicos');
+      container.innerHTML = '';
+
+      if (medicos.length === 0) {
+        container.innerHTML = `<div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center text-slate-400">Nenhum médico veterinário cadastrado.</div>`;
+        return;
+      }
+
+      medicos.forEach(m => {
+        const item = document.createElement('div');
+        item.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-center text-xs md:text-sm";
+        item.innerHTML = `
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">🩺 ${m.nome}</h3>
+            <p class="text-slate-500 font-semibold mt-0.5">CRMV: ${m.crmv}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button data-id="${m.id}" class="btn-editar-medico text-slate-400 hover:text-emerald-600 transition text-sm p-1" title="Editar">✏️</button>
+            <button data-id="${m.id}" class="btn-deletar-medico text-slate-300 hover:text-red-500 transition text-sm p-1" title="Deletar">🗑️</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      document.querySelectorAll('.btn-editar-medico').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          const m = medicos.find(item => item.id === id);
+          if (m) abrirModalMedicoParaEdicao(m);
+        });
+      });
+
+      document.querySelectorAll('.btn-deletar-medico').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          if (confirm('Deseja excluir este médico do cadastro?')) {
+            removerMedicoDaNuvem(id);
+          }
+        });
+      });
+    }
+
+    // Renderização das Clínicas
     function renderizarListaClinicas() {
       const container = document.getElementById('lista-clinicas');
       container.innerHTML = '';
 
       if (clinicas.length === 0) {
-        container.innerHTML = `<div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center text-slate-400">Nenhuma clínica ou veterinário cadastrado ainda.</div>`;
+        container.innerHTML = `<div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center text-slate-400">Nenhuma clínica ou hospital cadastrado.</div>`;
         return;
       }
 
       clinicas.forEach(c => {
         const item = document.createElement('div');
-        item.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-start text-xs md:text-sm";
+        item.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-center text-xs md:text-sm";
         item.innerHTML = `
-          <div class="space-y-1">
-            <h3 class="font-bold text-slate-800 text-sm md:text-base">${c.nome}</h3>
-            ${c.vetNome ? `<p class="text-slate-600">🩺 <strong>Veterinário:</strong> ${c.vetNome} ${c.vetCrmv ? `(${c.vetCrmv})` : ''}</p>` : ''}
-            ${c.endereco ? `<p class="text-slate-500">📍 ${c.endereco}</p>` : ''}
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">🏥 ${c.nome}</h3>
+            ${c.endereco ? `<p class="text-slate-500 mt-0.5">📍 ${c.endereco}</p>` : ''}
           </div>
           <div class="flex items-center gap-2">
             <button data-id="${c.id}" class="btn-editar-clinica text-slate-400 hover:text-emerald-600 transition text-sm p-1" title="Editar">✏️</button>
@@ -876,12 +1014,22 @@
       });
     }
 
+    function atualizarSeletorMedicosNoModalVacina() {
+      vacSeletorMedico.innerHTML = '<option value="">-- Selecione para preencher --</option>';
+      medicos.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = `${m.nome} (${m.crmv})`;
+        vacSeletorMedico.appendChild(opt);
+      });
+    }
+
     function atualizarSeletorClinicasNoModalVacina() {
-      vacSeletorClinica.innerHTML = '<option value="">-- Selecione para preencher automaticamente --</option>';
+      vacSeletorClinica.innerHTML = '<option value="">-- Selecione para preencher --</option>';
       clinicas.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id;
-        opt.textContent = `${c.nome} ${c.vetNome ? `(${c.vetNome})` : ''}`;
+        opt.textContent = c.nome;
         vacSeletorClinica.appendChild(opt);
       });
     }
@@ -1332,39 +1480,61 @@
       }
     });
 
-    // Funções do Modal de Clínica
+    // Modais e Forms de Médico e Clínica
+    btnAbrirModalMedico.addEventListener('click', () => {
+      document.getElementById('med-id').value = '';
+      formMedico.reset();
+      document.getElementById('modal-medico-titulo').textContent = 'Cadastrar Médico Veterinário';
+      modalMedico.classList.remove('hidden');
+    });
+
+    btnFecharModalMedico.addEventListener('click', () => modalMedico.classList.add('hidden'));
+
+    function abrirModalMedicoParaEdicao(m) {
+      document.getElementById('med-id').value = m.id;
+      document.getElementById('med-nome').value = m.nome || '';
+      document.getElementById('med-crmv').value = m.crmv || '';
+      document.getElementById('modal-medico-titulo').textContent = 'Editar Médico Veterinário';
+      modalMedico.classList.remove('hidden');
+    }
+
+    formMedico.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('med-id').value || ('med-' + Date.now());
+      salvarMedicoNaNuvem({
+        id: id,
+        nome: document.getElementById('med-nome').value,
+        crmv: document.getElementById('med-crmv').value
+      });
+      modalMedico.classList.add('hidden');
+      formMedico.reset();
+    });
+
     btnAbrirModalClinica.addEventListener('click', () => {
       document.getElementById('cli-id').value = '';
       formClinica.reset();
-      document.getElementById('modal-clinica-titulo').textContent = 'Cadastrar Clínica / Veterinário';
+      document.getElementById('modal-clinica-titulo').textContent = 'Cadastrar Clínica / Hospital';
       modalClinica.classList.remove('hidden');
     });
 
     btnFecharModalClinica.addEventListener('click', () => modalClinica.classList.add('hidden'));
 
-    function abrirModalClinicaParaEdicao(clinica) {
-      document.getElementById('cli-id').value = clinica.id;
-      document.getElementById('cli-nome').value = clinica.nome || '';
-      document.getElementById('cli-vet-nome').value = clinica.vetNome || '';
-      document.getElementById('cli-vet-crmv').value = clinica.vetCrmv || '';
-      document.getElementById('cli-endereco').value = clinica.endereco || '';
-
-      document.getElementById('modal-clinica-titulo').textContent = 'Editar Clínica / Veterinário';
+    function abrirModalClinicaParaEdicao(c) {
+      document.getElementById('cli-id').value = c.id;
+      document.getElementById('cli-nome').value = c.nome || '';
+      document.getElementById('cli-endereco').value = c.endereco || '';
+      document.getElementById('modal-clinica-titulo').textContent = 'Editar Clínica / Hospital';
       modalClinica.classList.remove('hidden');
     }
 
     formClinica.addEventListener('submit', (e) => {
       e.preventDefault();
-      const cliId = document.getElementById('cli-id').value || ('cli-' + Date.now());
-      const data = {
-        id: cliId,
+      const id = document.getElementById('cli-id').value || ('cli-' + Date.now());
+      salvarClinicaNaNuvem({
+        id: id,
         nome: document.getElementById('cli-nome').value,
-        vetNome: document.getElementById('cli-vet-nome').value,
-        vetCrmv: document.getElementById('cli-vet-crmv').value,
         endereco: document.getElementById('cli-endereco').value
-      };
-
-      salvarClinicaNaNuvem(data);
+      });
       modalClinica.classList.add('hidden');
       formClinica.reset();
     });
@@ -1403,8 +1573,9 @@
       document.getElementById('vac-renovada').checked = false;
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
-      vacSeletorClinica.value = '';
       
+      vacSeletorMedico.value = '';
+      vacSeletorClinica.value = '';
       document.getElementById('vac-vet-nome').value = '';
       document.getElementById('vac-vet-crmv').value = '';
       document.getElementById('vac-clinica-nome').value = '';
