@@ -48,162 +48,194 @@
     <!-- Conteúdo Principal -->
     <main id="app-content" class="hidden space-y-5">
 
-      <!-- Seleção de Pets -->
-      <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200">
-        <label for="seletor-pet" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Selecionar Paciente:</label>
-        <div class="flex items-center gap-2">
-          <select id="seletor-pet" class="flex-1 border-2 border-emerald-500/30 p-2.5 rounded-xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500 bg-emerald-50/40 shadow-sm cursor-pointer min-h-[44px]"></select>
-          
-          <button id="btn-abrir-modal-pet" type="button" class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs py-2.5 px-3.5 rounded-xl transition flex items-center justify-center gap-1 shadow min-h-[44px] whitespace-nowrap">
-            🐾 + Novo
-          </button>
-          
-          <button id="btn-deletar-pet" type="button" class="text-xs text-red-500 hover:bg-red-50 hover:text-red-600 p-2.5 rounded-xl transition border border-red-200 min-h-[44px] px-3 flex items-center justify-center" title="Excluir Pet Selecionado">
-            🗑️
-          </button>
-        </div>
+      <!-- Navegação de Abas -->
+      <div class="flex border-b border-slate-200 gap-2 text-xs md:text-sm font-bold">
+        <button id="aba-tab-pets" type="button" class="py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm">
+          🐾 Pacientes Pets
+        </button>
+        <button id="aba-tab-clinicas" type="button" class="py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition">
+          🏥 Clínicas e Veterinários
+        </button>
       </div>
 
-      <!-- Card do Pet Selecionado -->
-      <div class="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-          <div class="flex items-center gap-3">
-            <div id="avatar-pet-display" class="w-14 h-14 rounded-full border-2 border-emerald-500 flex items-center justify-center text-xl shadow-sm relative overflow-hidden bg-slate-100">
-              <span id="avatar-emoji">🐶</span>
-              <img id="avatar-img" src="" class="hidden w-full h-full object-cover" alt="Foto do Pet" />
-            </div>
-            <div>
-              <h2 id="titulo-pet" class="text-lg md:text-xl font-bold text-slate-800">Dados do Paciente</h2>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span id="badge-raca" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">-</span>
-                <span id="badge-comprimento" class="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Pelo Curto</span>
-              </div>
-            </div>
-          </div>
-          <button id="btn-editar-pet" type="button" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg transition">
-            Editar Dados
-          </button>
-        </div>
-
-        <!-- Visualização Completa dos Dados -->
-        <div id="pet-view" class="space-y-4">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs md:text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
-            <div><span class="text-slate-400 block text-[11px]">Nome</span><strong id="v-nome" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Espécie / Raça</span><strong id="v-raca" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Sexo</span><strong id="v-sexo" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Pelagem / Cores</span><strong id="v-cor" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Comprimento Pelo</span><strong id="v-pelo" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Peso</span><strong id="v-peso" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Nascimento</span><strong id="v-nascimento" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Idade</span><strong id="v-idade" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Local de Nascimento</span><strong id="v-local-nasc" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Microchip</span><strong id="v-microchip" class="text-slate-800">-</strong></div>
+      <!-- PAINEL 1: PACIENTES PETS -->
+      <div id="painel-pets" class="space-y-5">
+        
+        <!-- Seleção de Pets -->
+        <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200">
+          <label for="seletor-pet" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Selecionar Paciente:</label>
+          <div class="flex items-center gap-2">
+            <select id="seletor-pet" class="flex-1 border-2 border-emerald-500/30 p-2.5 rounded-xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500 bg-emerald-50/40 shadow-sm cursor-pointer min-h-[44px]"></select>
             
-            <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2.5 mt-1">
-              <span class="text-slate-400 block text-[11px] mb-1">Responsáveis / Tutores</span>
-              <div id="v-tutores-container" class="flex flex-wrap gap-1.5 items-center">
-                <span id="v-tutor-principal" class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">⭐ Principal: -</span>
-                <div id="v-tutores-outros" class="flex flex-wrap gap-1.5"></div>
+            <button id="btn-abrir-modal-pet" type="button" class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs py-2.5 px-3.5 rounded-xl transition flex items-center justify-center gap-1 shadow min-h-[44px] whitespace-nowrap">
+              🐾 + Novo
+            </button>
+            
+            <button id="btn-deletar-pet" type="button" class="text-xs text-red-500 hover:bg-red-50 hover:text-red-600 p-2.5 rounded-xl transition border border-red-200 min-h-[44px] px-3 flex items-center justify-center" title="Excluir Pet Selecionado">
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        <!-- Card do Pet Selecionado -->
+        <div class="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-3">
+              <div id="avatar-pet-display" class="w-14 h-14 rounded-full border-2 border-emerald-500 flex items-center justify-center text-xl shadow-sm relative overflow-hidden bg-slate-100">
+                <span id="avatar-emoji">🐶</span>
+                <img id="avatar-img" src="" class="hidden w-full h-full object-cover" alt="Foto do Pet" />
+              </div>
+              <div>
+                <h2 id="titulo-pet" class="text-lg md:text-xl font-bold text-slate-800">Dados do Paciente</h2>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  <span id="badge-raca" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">-</span>
+                  <span id="badge-comprimento" class="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Pelo Curto</span>
+                </div>
               </div>
             </div>
+            <button id="btn-editar-pet" type="button" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg transition">
+              Editar Dados
+            </button>
+          </div>
 
-            <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2">
-              <span class="text-slate-400 block text-[11px]">E-mails Google Autorizados para Editar:</span>
-              <div id="v-emails-autorizados" class="text-xs text-emerald-700 font-mono font-semibold mt-0.5"></div>
+          <!-- Visualização Completa dos Dados -->
+          <div id="pet-view" class="space-y-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs md:text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <div><span class="text-slate-400 block text-[11px]">Nome</span><strong id="v-nome" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Espécie / Raça</span><strong id="v-raca" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Sexo</span><strong id="v-sexo" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Pelagem / Cores</span><strong id="v-cor" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Comprimento Pelo</span><strong id="v-pelo" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Peso</span><strong id="v-peso" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Nascimento</span><strong id="v-nascimento" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Idade</span><strong id="v-idade" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Local de Nascimento</span><strong id="v-local-nasc" class="text-slate-800">-</strong></div>
+              <div><span class="text-slate-400 block text-[11px]">Microchip</span><strong id="v-microchip" class="text-slate-800">-</strong></div>
+              
+              <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2.5 mt-1">
+                <span class="text-slate-400 block text-[11px] mb-1">Responsáveis / Tutores</span>
+                <div id="v-tutores-container" class="flex flex-wrap gap-1.5 items-center">
+                  <span id="v-tutor-principal" class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">⭐ Principal: -</span>
+                  <div id="v-tutores-outros" class="flex flex-wrap gap-1.5"></div>
+                </div>
+              </div>
+
+              <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2">
+                <span class="text-slate-400 block text-[11px]">E-mails Google Autorizados para Editar:</span>
+                <div id="v-emails-autorizados" class="text-xs text-emerald-700 font-mono font-semibold mt-0.5"></div>
+              </div>
+
+              <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2"><span class="text-slate-400 block text-[11px]">Perfil Social</span><strong id="v-perfil-social" class="text-slate-800">-</strong></div>
+            </div>
+          </div>
+
+          <!-- Formulário de Edição do Pet -->
+          <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs md:text-sm mt-2">
+            <label class="block sm:col-span-2">Foto do Pet: 
+              <input type="file" id="f-foto" accept="image/*" class="w-full border p-2 rounded-lg text-sm bg-white cursor-pointer" />
+            </label>
+
+            <label class="block">Nome: <input id="f-nome" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
+            <label class="block">Espécie: 
+              <select id="f-especie" class="w-full border p-2.5 rounded-lg bg-white text-sm" required>
+                <option value="Canina">Cão 🐶</option>
+                <option value="Felina">Gato 🐱</option>
+              </select>
+            </label>
+            <label class="block">Raça: <input id="f-raca" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
+            <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
+
+            <label class="block">Cor Principal: 
+              <select id="f-cor-base" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+                <option value="Branco">Branco</option>
+                <option value="Preto">Preto</option>
+                <option value="Caramelo">Caramelo</option>
+                <option value="Cinza">Cinza</option>
+                <option value="Marrom">Marrom</option>
+                <option value="Outra">Outra...</option>
+              </select>
+            </label>
+
+            <div id="box-f-cor-outra" class="hidden">
+              <label class="block">Especifique a Cor Principal: 
+                <input id="f-cor-outra" placeholder="Ex: Dourado, Creme..." class="w-full border p-2.5 rounded-lg text-sm" />
+              </label>
             </div>
 
-            <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2"><span class="text-slate-400 block text-[11px]">Perfil Social</span><strong id="v-perfil-social" class="text-slate-800">-</strong></div>
-          </div>
+            <label class="block">Textura da Pelagem: 
+              <select id="f-textura" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+                <option value="Sólido">Sólido (Cor Única)</option>
+                <option value="Malhado">Malhado</option>
+                <option value="Bicolor">Bicolor</option>
+                <option value="Tricolor">Tricolor</option>
+                <option value="Rajado">Rajado</option>
+                <option value="Listrado">Listrado</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+
+            <div id="box-f-outras-cores" class="block sm:col-span-2">
+              <label class="block">Outras Cores Presentes na Pelagem: 
+                <input id="f-outras-cores" placeholder="Ex: Branco e Marrom, Manchas Pretas..." class="w-full border p-2.5 rounded-lg text-sm" />
+              </label>
+            </div>
+
+            <label class="block">Comprimento do Pelo: 
+              <select id="f-comprimento-pelo" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+                <option value="Curto">Curto</option>
+                <option value="Longo">Longo</option>
+              </select>
+            </label>
+
+            <label class="block">Peso (kg): <input id="f-peso" placeholder="Ex: 3.5" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+            <label class="block">Data de Nascimento: <input id="f-nascimento" type="date" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+            <label class="block sm:col-span-2">Local de Nascimento: <input id="f-local-nasc" placeholder="Ex: Recife - PE" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+            <label class="block sm:col-span-2">Microchip: <input id="f-microchip" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+            
+            <label class="block sm:col-span-2">⭐ Tutor Principal: <input id="f-tutor-principal" placeholder="Ex: Arlindo Santos" class="w-full border p-2.5 rounded-lg font-semibold text-sm" required /></label>
+            <label class="block sm:col-span-2">Outros Tutores: <input id="f-tutores-outros" placeholder="Ex: Idylla Santos" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+            
+            <label class="block sm:col-span-2">E-mails Google Autorizados para Editar (separe por vírgula): 
+              <input id="f-emails-autorizados" placeholder="email1@gmail.com, email2@gmail.com" class="w-full border p-2.5 rounded-lg text-sm font-mono text-emerald-800 bg-emerald-50/30" required />
+            </label>
+
+            <label class="block sm:col-span-2">Perfil Social: <input id="f-perfil-social" placeholder="Ex: @theo_pet" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+
+            <div class="sm:col-span-2 text-right mt-2">
+              <button id="btn-salvar-pet-form" type="submit" class="w-full sm:w-auto bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">Salvar Alterações</button>
+            </div>
+          </form>
         </div>
 
-        <!-- Formulário de Edição do Pet -->
-        <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs md:text-sm mt-2">
-          <label class="block sm:col-span-2">Foto do Pet: 
-            <input type="file" id="f-foto" accept="image/*" class="w-full border p-2 rounded-lg text-sm bg-white cursor-pointer" />
-          </label>
-
-          <label class="block">Nome: <input id="f-nome" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
-          <label class="block">Espécie: 
-            <select id="f-especie" class="w-full border p-2.5 rounded-lg bg-white text-sm" required>
-              <option value="Canina">Cão 🐶</option>
-              <option value="Felina">Gato 🐱</option>
-            </select>
-          </label>
-          <label class="block">Raça: <input id="f-raca" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
-          <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
-
-          <label class="block">Cor Principal: 
-            <select id="f-cor-base" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-              <option value="Branco">Branco</option>
-              <option value="Preto">Preto</option>
-              <option value="Caramelo">Caramelo</option>
-              <option value="Cinza">Cinza</option>
-              <option value="Marrom">Marrom</option>
-              <option value="Outra">Outra...</option>
-            </select>
-          </label>
-
-          <div id="box-f-cor-outra" class="hidden">
-            <label class="block">Especifique a Cor Principal: 
-              <input id="f-cor-outra" placeholder="Ex: Dourado, Creme..." class="w-full border p-2.5 rounded-lg text-sm" />
-            </label>
+        <!-- Histórico Vacinal -->
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg md:text-xl font-bold text-slate-800">🛡️ Histórico Vacinal</h2>
+            <button id="btn-abrir-modal" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs md:text-sm px-4 py-2.5 rounded-xl shadow transition">
+              + Registrar Vacina
+            </button>
           </div>
 
-          <label class="block">Textura da Pelagem: 
-            <select id="f-textura" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-              <option value="Sólido">Sólido (Cor Única)</option>
-              <option value="Malhado">Malhado</option>
-              <option value="Bicolor">Bicolor</option>
-              <option value="Tricolor">Tricolor</option>
-              <option value="Rajado">Rajado</option>
-              <option value="Listrado">Listrado</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </label>
+          <div id="lista-vacinas" class="space-y-3"></div>
+        </div>
 
-          <div id="box-f-outras-cores" class="block sm:col-span-2">
-            <label class="block">Outras Cores Presentes na Pelagem: 
-              <input id="f-outras-cores" placeholder="Ex: Branco e Marrom, Manchas Pretas..." class="w-full border p-2.5 rounded-lg text-sm" />
-            </label>
-          </div>
-
-          <label class="block">Comprimento do Pelo: 
-            <select id="f-comprimento-pelo" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-              <option value="Curto">Curto</option>
-              <option value="Longo">Longo</option>
-            </select>
-          </label>
-
-          <label class="block">Peso (kg): <input id="f-peso" placeholder="Ex: 3.5" class="w-full border p-2.5 rounded-lg text-sm" /></label>
-          <label class="block">Data de Nascimento: <input id="f-nascimento" type="date" class="w-full border p-2.5 rounded-lg text-sm" /></label>
-          <label class="block sm:col-span-2">Local de Nascimento: <input id="f-local-nasc" placeholder="Ex: Recife - PE" class="w-full border p-2.5 rounded-lg text-sm" /></label>
-          <label class="block sm:col-span-2">Microchip: <input id="f-microchip" class="w-full border p-2.5 rounded-lg text-sm" /></label>
-          
-          <label class="block sm:col-span-2">⭐ Tutor Principal: <input id="f-tutor-principal" placeholder="Ex: Arlindo Santos" class="w-full border p-2.5 rounded-lg font-semibold text-sm" required /></label>
-          <label class="block sm:col-span-2">Outros Tutores: <input id="f-tutores-outros" placeholder="Ex: Idylla Santos" class="w-full border p-2.5 rounded-lg text-sm" /></label>
-          
-          <label class="block sm:col-span-2">E-mails Google Autorizados para Editar (separe por vírgula): 
-            <input id="f-emails-autorizados" placeholder="email1@gmail.com, email2@gmail.com" class="w-full border p-2.5 rounded-lg text-sm font-mono text-emerald-800 bg-emerald-50/30" required />
-          </label>
-
-          <label class="block sm:col-span-2">Perfil Social: <input id="f-perfil-social" placeholder="Ex: @theo_pet" class="w-full border p-2.5 rounded-lg text-sm" /></label>
-
-          <div class="sm:col-span-2 text-right mt-2">
-            <button id="btn-salvar-pet-form" type="submit" class="w-full sm:w-auto bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">Salvar Alterações</button>
-          </div>
-        </form>
       </div>
 
-      <!-- Histórico Vacinal -->
-      <div class="space-y-4">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg md:text-xl font-bold text-slate-800">🛡️ Histórico Vacinal</h2>
-          <button id="btn-abrir-modal" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs md:text-sm px-4 py-2.5 rounded-xl shadow transition">
-            + Registrar Vacina
-          </button>
-        </div>
+      <!-- PAINEL 2: CLÍNICAS E VETERINÁRIOS -->
+      <div id="painel-clinicas" class="hidden space-y-5">
+        <div class="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">🏥 Clínicas & Médicos Veterinários</h2>
+              <p class="text-xs text-slate-500">Cadastre para preencher dados de vacinas automaticamente.</p>
+            </div>
+            <button id="btn-abrir-modal-clinica" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3.5 rounded-xl shadow transition">
+              + Cadastrar Local
+            </button>
+          </div>
 
-        <div id="lista-vacinas" class="space-y-3"></div>
+          <div id="lista-clinicas" class="space-y-3"></div>
+        </div>
       </div>
 
     </main>
@@ -348,6 +380,42 @@
     </div>
   </div>
 
+  <!-- Modal Cadastrar / Editar Clínica -->
+  <div id="modal-clinica" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-xs md:text-sm">
+      <h3 id="modal-clinica-titulo" class="text-lg font-bold text-slate-800">Cadastrar Clínica / Veterinário</h3>
+      <form id="form-clinica" class="space-y-3">
+        <input type="hidden" id="cli-id" />
+        
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nome da Clínica / Hospital *</label>
+          <input id="cli-nome" required placeholder="Ex: Clínica Vet Vida" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Médico Veterinário</label>
+            <input id="cli-vet-nome" placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">CRMV</label>
+            <input id="cli-vet-crmv" placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Endereço da Clínica</label>
+          <input id="cli-endereco" placeholder="Ex: Av. Boa Viagem, 1000 - Recife/PE" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button id="btn-fechar-modal-clinica" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Local</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Cadastrar / Editar Vacina -->
   <div id="modal-vacina" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-xs md:text-sm">
@@ -379,11 +447,18 @@
           <textarea id="vac-desc" rows="2" placeholder="O que esta vacina previne..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
         </div>
 
-        <!-- Dados Veterinários e Local de Aplicação -->
+        <!-- Seletor de Clínica/Veterinário Pré-cadastrado -->
         <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200/60 space-y-2">
-          <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1">🩺 Dados da Aplicação & Veterinário</h4>
+          <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1">🩺 Local & Veterinário Responsável</h4>
           
-          <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Selecione da Lista de Cadastrados:</label>
+            <select id="vac-seletor-clinica" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs font-semibold">
+              <option value="">-- Selecione ou digite abaixo --</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
             <div>
               <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Médico Veterinário</label>
               <input id="vac-vet-nome" placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
@@ -478,6 +553,7 @@
 
     let currentUser = null;
     let pets = [];
+    let clinicas = [];
     let petAtualId = null;
 
     const btnLogin = document.getElementById('btn-login');
@@ -487,6 +563,11 @@
     const userName = document.getElementById('user-name');
     const alertLogin = document.getElementById('alert-login');
     const appContent = document.getElementById('app-content');
+
+    const abaTabPets = document.getElementById('aba-tab-pets');
+    const abaTabClinicas = document.getElementById('aba-tab-clinicas');
+    const painelPets = document.getElementById('painel-pets');
+    const painelClinicas = document.getElementById('painel-clinicas');
 
     const seletorPet = document.getElementById('seletor-pet');
     const btnAbrirModalPet = document.getElementById('btn-abrir-modal-pet');
@@ -505,6 +586,11 @@
     const badgeRaca = document.getElementById('badge-raca');
     const badgeComprimento = document.getElementById('badge-comprimento');
 
+    const modalClinica = document.getElementById('modal-clinica');
+    const btnAbrirModalClinica = document.getElementById('btn-abrir-modal-clinica');
+    const btnFecharModalClinica = document.getElementById('btn-fechar-modal-clinica');
+    const formClinica = document.getElementById('form-clinica');
+
     const btnAbrirModal = document.getElementById('btn-abrir-modal');
     const btnFecharModal = document.getElementById('btn-fechar-modal');
     const modalVacina = document.getElementById('modal-vacina');
@@ -519,6 +605,22 @@
     const lblVacDataApp = document.getElementById('lbl-vac-data-app');
     const chkDoseUnica = document.getElementById('vac-dose-unica');
     const boxDataProx = document.getElementById('box-data-prox');
+    const vacSeletorClinica = document.getElementById('vac-seletor-clinica');
+
+    // Alternar Abas
+    abaTabPets.addEventListener('click', () => {
+      painelPets.classList.remove('hidden');
+      painelClinicas.classList.add('hidden');
+      abaTabPets.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm";
+      abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition";
+    });
+
+    abaTabClinicas.addEventListener('click', () => {
+      painelClinicas.classList.remove('hidden');
+      painelPets.classList.add('hidden');
+      abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm";
+      abaTabPets.className = "py-2.5 px-4 rounded-t-xl bg-slate-200/70 text-slate-600 hover:bg-slate-200 transition";
+    });
 
     document.getElementById('np-cor-base').addEventListener('change', (e) => {
       document.getElementById('box-np-cor-outra').classList.toggle('hidden', e.target.value !== 'Outra');
@@ -561,6 +663,18 @@
       }
     });
 
+    // Auto-preenchimento ao escolher uma clínica cadastrada no modal da vacina
+    vacSeletorClinica.addEventListener('change', () => {
+      const id = vacSeletorClinica.value;
+      const c = clinicas.find(item => item.id === id);
+      if (c) {
+        document.getElementById('vac-vet-nome').value = c.vetNome || '';
+        document.getElementById('vac-vet-crmv').value = c.vetCrmv || '';
+        document.getElementById('vac-clinica-nome').value = c.nome || '';
+        document.getElementById('vac-clinica-endereco').value = c.endereco || '';
+      }
+    });
+
     btnLogin.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => alert("Erro ao realizar login: " + err.message));
@@ -583,6 +697,7 @@
       } else {
         currentUser = null;
         pets = [];
+        clinicas = [];
         userInfo.classList.add('hidden');
         btnLogin.classList.remove('hidden');
         alertLogin.classList.add('hidden');
@@ -591,6 +706,7 @@
     });
 
     function ouvirDatabaseNuvemCompartilhada() {
+      // 1. Ouvir Pets
       const familiasRef = database.ref('familias_pets');
       familiasRef.on('value', (snapshot) => {
         const val = snapshot.val();
@@ -610,6 +726,20 @@
 
         atualizarSeletorPets();
         renderizarPet();
+      });
+
+      // 2. Ouvir Clínicas
+      const clinicasRef = database.ref('clinicas_cadastradas');
+      clinicasRef.on('value', (snapshot) => {
+        const val = snapshot.val();
+        clinicas = [];
+        if (val) {
+          Object.keys(val).forEach(k => {
+            clinicas.push({ id: k, ...val[k] });
+          });
+        }
+        renderizarListaClinicas();
+        atualizarSeletorClinicasNoModalVacina();
       });
     }
 
@@ -651,6 +781,16 @@
       database.ref(`familias_pets/${petId}`).remove();
     }
 
+    function salvarClinicaNaNuvem(clinicaData) {
+      if (!currentUser) return;
+      database.ref(`clinicas_cadastradas/${clinicaData.id}`).set(clinicaData);
+    }
+
+    function removerClinicaDaNuvem(clinicaId) {
+      if (!currentUser) return;
+      database.ref(`clinicas_cadastradas/${clinicaId}`).remove();
+    }
+
     function getPetAtivo() {
       return pets.find(p => p.id === petAtualId) || pets[0];
     }
@@ -690,6 +830,60 @@
       if (!novoId) return;
       petAtualId = novoId;
       renderizarPet();
+    }
+
+    function renderizarListaClinicas() {
+      const container = document.getElementById('lista-clinicas');
+      container.innerHTML = '';
+
+      if (clinicas.length === 0) {
+        container.innerHTML = `<div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center text-slate-400">Nenhuma clínica ou veterinário cadastrado ainda.</div>`;
+        return;
+      }
+
+      clinicas.forEach(c => {
+        const item = document.createElement('div');
+        item.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-start text-xs md:text-sm";
+        item.innerHTML = `
+          <div class="space-y-1">
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">${c.nome}</h3>
+            ${c.vetNome ? `<p class="text-slate-600">🩺 <strong>Veterinário:</strong> ${c.vetNome} ${c.vetCrmv ? `(${c.vetCrmv})` : ''}</p>` : ''}
+            ${c.endereco ? `<p class="text-slate-500">📍 ${c.endereco}</p>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            <button data-id="${c.id}" class="btn-editar-clinica text-slate-400 hover:text-emerald-600 transition text-sm p-1" title="Editar">✏️</button>
+            <button data-id="${c.id}" class="btn-deletar-clinica text-slate-300 hover:text-red-500 transition text-sm p-1" title="Deletar">🗑️</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      document.querySelectorAll('.btn-editar-clinica').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          const c = clinicas.find(item => item.id === id);
+          if (c) abrirModalClinicaParaEdicao(c);
+        });
+      });
+
+      document.querySelectorAll('.btn-deletar-clinica').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          if (confirm('Deseja excluir esta clínica do cadastro?')) {
+            removerClinicaDaNuvem(id);
+          }
+        });
+      });
+    }
+
+    function atualizarSeletorClinicasNoModalVacina() {
+      vacSeletorClinica.innerHTML = '<option value="">-- Selecione para preencher automaticamente --</option>';
+      clinicas.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.nome} ${c.vetNome ? `(${c.vetNome})` : ''}`;
+        vacSeletorClinica.appendChild(opt);
+      });
     }
 
     function renderizarPet() {
@@ -919,7 +1113,6 @@
           }
         }
 
-        // Bloco dos Dados Veterinários
         let vetInfoHtml = '';
         if (v.vetNome || v.vetCrmv || v.clinicaNome || v.clinicaEndereco) {
           vetInfoHtml = `
@@ -981,7 +1174,6 @@
               document.getElementById('vac-renovada').checked = false;
               document.getElementById('vac-data-app').value = vacinaOld.dataProxima || '';
               
-              // Mantém o vet e a clínica da dose anterior como sugestão
               document.getElementById('vac-vet-nome').value = vacinaOld.vetNome || '';
               document.getElementById('vac-vet-crmv').value = vacinaOld.vetCrmv || '';
               document.getElementById('vac-clinica-nome').value = vacinaOld.clinicaNome || '';
@@ -1140,6 +1332,43 @@
       }
     });
 
+    // Funções do Modal de Clínica
+    btnAbrirModalClinica.addEventListener('click', () => {
+      document.getElementById('cli-id').value = '';
+      formClinica.reset();
+      document.getElementById('modal-clinica-titulo').textContent = 'Cadastrar Clínica / Veterinário';
+      modalClinica.classList.remove('hidden');
+    });
+
+    btnFecharModalClinica.addEventListener('click', () => modalClinica.classList.add('hidden'));
+
+    function abrirModalClinicaParaEdicao(clinica) {
+      document.getElementById('cli-id').value = clinica.id;
+      document.getElementById('cli-nome').value = clinica.nome || '';
+      document.getElementById('cli-vet-nome').value = clinica.vetNome || '';
+      document.getElementById('cli-vet-crmv').value = clinica.vetCrmv || '';
+      document.getElementById('cli-endereco').value = clinica.endereco || '';
+
+      document.getElementById('modal-clinica-titulo').textContent = 'Editar Clínica / Veterinário';
+      modalClinica.classList.remove('hidden');
+    }
+
+    formClinica.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const cliId = document.getElementById('cli-id').value || ('cli-' + Date.now());
+      const data = {
+        id: cliId,
+        nome: document.getElementById('cli-nome').value,
+        vetNome: document.getElementById('cli-vet-nome').value,
+        vetCrmv: document.getElementById('cli-vet-crmv').value,
+        endereco: document.getElementById('cli-endereco').value
+      };
+
+      salvarClinicaNaNuvem(data);
+      modalClinica.classList.add('hidden');
+      formClinica.reset();
+    });
+
     function prepararModalVacinaParaEspecie(especie) {
       vacSelecao.innerHTML = '';
       const lista = VACINAS_PREDEFINIDAS[especie] || VACINAS_PREDEFINIDAS.Canina;
@@ -1174,6 +1403,7 @@
       document.getElementById('vac-renovada').checked = false;
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
+      vacSeletorClinica.value = '';
       
       document.getElementById('vac-vet-nome').value = '';
       document.getElementById('vac-vet-crmv').value = '';
