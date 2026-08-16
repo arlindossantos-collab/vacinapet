@@ -527,21 +527,13 @@
 
         </div>
 
-        <!-- Checkbox para Histórico sem Alerta de Atraso -->
-        <div id="box-historico-concluido" class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-          <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-700">
-            <input type="checkbox" id="vac-renovada" class="w-4 h-4 accent-emerald-600 rounded">
-            <span>Dose de renovação posterior já foi tomada?</span>
-          </label>
-          <p class="text-[11px] text-slate-500 leading-tight">Marque esta opção se você está inserindo uma dose antiga do histórico e o pet já tomou a dose do ano seguinte.</p>
-        </div>
-
-        <!-- Opção de Dose Única -->
+        <!-- Opção de Dose Única / Ciclo Concluído -->
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
           <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-700">
             <input type="checkbox" id="vac-dose-unica" class="w-4 h-4 accent-emerald-600 rounded">
-            <span>É dose única? (Sem próxima dose)</span>
+            <span>Dose única / Ciclo de imunização finalizado</span>
           </label>
+          <p class="text-[11px] text-slate-500 leading-tight mt-1">Marque caso o esquema vacinal tenha sido concluído sem necessidade de novas doses.</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1154,7 +1146,6 @@
         let proxHtml = '';
         let appHtml = '';
         let cardBgBorder = "bg-white border-slate-200";
-        let acaoExtraHtml = '';
 
         if (isPendente) {
           const dtAgendada = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00') : null;
@@ -1197,6 +1188,7 @@
           }
 
         } else {
+          // Vacina já tomada (Aplicada)
           appHtml = `
             <div class="bg-slate-50 p-2.5 rounded-lg">
               <span class="block text-slate-400">Data de Aplicação</span>
@@ -1207,15 +1199,8 @@
           if (v.doseUnica) {
             proxHtml = `
               <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
-                <span class="block text-emerald-700 font-semibold">Tipo de Dose</span>
-                <strong class="text-emerald-900">Dose Única Aplicada ✅</strong>
-              </div>
-            `;
-          } else if (v.renovada) {
-            proxHtml = `
-              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
-                <span class="block text-emerald-700 font-semibold">Histórico Registrado</span>
-                <strong>Dose Cumprida (Renovada) ✅</strong>
+                <span class="block text-emerald-700 font-semibold">Status da Imunização</span>
+                <strong class="text-emerald-900">Ciclo de imunização concluído ✅</strong>
               </div>
             `;
           } else if (v.dataProxima) {
@@ -1228,44 +1213,31 @@
               cardBgBorder = "bg-amber-50/40 border-amber-200";
               proxHtml = `
                 <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-200 text-amber-900">
-                  <span class="block text-amber-700 font-bold">Renovação Prevista (${dataProxStr})</span>
-                  <strong>Dose Anterior Vencida</strong>
+                  <span class="block text-amber-700 font-bold">Repetição do Ciclo</span>
+                  <strong>A próxima dose deveria ter sido aplicada em ${dataProxStr} (Atrasada)</strong>
                 </div>
-              `;
-              acaoExtraHtml = `
-                <button data-id="${v.id}" class="btn-renovar-vacina w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1 shadow mt-1">
-                  💉 Registrar Nova Dose Aplicada
-                </button>
               `;
             } else if (diffDias === 0) {
               cardBgBorder = "bg-red-50/60 border-red-300";
               proxHtml = `
                 <div class="bg-red-500 text-white p-2.5 rounded-lg font-bold">
-                  <span class="block text-red-100 text-[11px]">Próxima Dose</span>
-                  🚨 APLICAR HOJE! (${dataProxStr})
-                </div>
-              `;
-            } else if (diffDias <= 30) {
-              cardBgBorder = "bg-amber-50/40 border-amber-200";
-              proxHtml = `
-                <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-300 text-amber-900">
-                  <span class="block text-amber-700 font-bold">Próxima Dose (${dataProxStr})</span>
-                  <strong>⏳ Faltam ${diffDias} dias</strong>
+                  <span class="block text-red-100 text-[11px]">Repetição do Ciclo</span>
+                  🚨 A próxima dose deverá ser aplicada HOJE! (${dataProxStr})
                 </div>
               `;
             } else {
               proxHtml = `
                 <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
-                  <span class="block text-emerald-700 font-bold">Próxima Dose (${dataProxStr})</span>
-                  <strong>Faltam ${diffDias} dias</strong>
+                  <span class="block text-emerald-700 font-bold">Repetição do Ciclo</span>
+                  <strong>A próxima dose deverá ser aplicada em ${dataProxStr}</strong>
                 </div>
               `;
             }
           } else {
             proxHtml = `
-              <div class="bg-slate-50 p-2.5 rounded-lg">
-                <span class="block text-slate-400">Próxima Dose</span>
-                <strong>Não agendado</strong>
+              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+                <span class="block text-emerald-700 font-semibold">Status da Imunização</span>
+                <strong class="text-emerald-900">Ciclo de imunização concluído ✅</strong>
               </div>
             `;
           }
@@ -1305,43 +1277,9 @@
           </div>
 
           ${vetInfoHtml}
-          ${acaoExtraHtml}
         `;
 
         container.appendChild(card);
-      });
-
-      document.querySelectorAll('.btn-renovar-vacina').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const vacinaId = e.currentTarget.getAttribute('data-id');
-          const pet = getPetAtivo();
-          if (pet) {
-            const list = Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas || {});
-            const vacinaOld = list.find(v => v.id === vacinaId);
-            if (vacinaOld) {
-              vacinaOld.renovada = true;
-              prepararModalVacinaParaEspecie(pet.especie);
-
-              document.getElementById('vac-id').value = '';
-              vacSelecao.value = 'outra';
-              boxVacNomeManual.classList.remove('hidden');
-              vacNomeManual.value = vacinaOld.nome || '';
-              vacDesc.value = vacinaOld.descricao || '';
-              vacStatus.value = 'aplicada';
-              chkDoseUnica.checked = false;
-              document.getElementById('vac-renovada').checked = false;
-              document.getElementById('vac-data-app').value = vacinaOld.dataProxima || '';
-              
-              document.getElementById('vac-vet-nome').value = vacinaOld.vetNome || '';
-              document.getElementById('vac-vet-crmv').value = vacinaOld.vetCrmv || '';
-              document.getElementById('vac-clinica-nome').value = vacinaOld.clinicaNome || '';
-              document.getElementById('vac-clinica-endereco').value = vacinaOld.clinicaEndereco || '';
-
-              modalVacinaTitulo.textContent = 'Registrar Nova Dose Aplicada';
-              modalVacina.classList.remove('hidden');
-            }
-          }
-        });
       });
 
       document.querySelectorAll('.btn-editar-vacina').forEach(btn => {
@@ -1611,7 +1549,6 @@
       vacStatus.value = 'aplicada';
       lblVacDataApp.textContent = 'Data Aplicação *';
       chkDoseUnica.checked = false;
-      document.getElementById('vac-renovada').checked = false;
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
       
@@ -1659,7 +1596,6 @@
       
       const doseUnica = !!vacina.doseUnica;
       chkDoseUnica.checked = doseUnica;
-      document.getElementById('vac-renovada').checked = !!vacina.renovada;
 
       if (doseUnica) {
         boxDataProx.classList.add('hidden');
@@ -1689,7 +1625,6 @@
 
       const vacId = document.getElementById('vac-id').value;
       const isDoseUnica = chkDoseUnica.checked;
-      const isRenovada = document.getElementById('vac-renovada').checked;
 
       let nomeVacinaFinal = vacSelecao.value;
       if (nomeVacinaFinal === 'outra' || !nomeVacinaFinal) {
@@ -1706,7 +1641,6 @@
         status: vacStatus.value,
         descricao: vacDesc.value,
         doseUnica: isDoseUnica,
-        renovada: isRenovada,
         dataAplicacao: document.getElementById('vac-data-app').value,
         dataProxima: isDoseUnica ? '' : document.getElementById('vac-data-prox').value,
         vetNome: document.getElementById('vac-vet-nome').value,
