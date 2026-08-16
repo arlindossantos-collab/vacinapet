@@ -105,7 +105,7 @@
           </button>
         </div>
 
-        <!-- Visualização dos Dados -->
+        <!-- Visualização Completa dos Dados -->
         <div id="pet-view" class="space-y-4">
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs md:text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
             <div><span class="text-slate-400 block text-[11px]">Nome</span><strong id="v-nome" class="text-slate-800">-</strong></div>
@@ -130,11 +130,11 @@
               <div id="v-emails-autorizados" class="text-xs text-emerald-700 font-mono font-semibold mt-0.5"></div>
             </div>
 
-            <div class="col-span-2 sm:col-span-4"><span class="text-slate-400 block text-[11px]">Perfil Social</span><strong id="v-perfil-social" class="text-slate-800">-</strong></div>
+            <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2"><span class="text-slate-400 block text-[11px]">Perfil Social</span><strong id="v-perfil-social" class="text-slate-800">-</strong></div>
           </div>
         </div>
 
-        <!-- Formulário de Edição do Pet (CORRIGIDO: Incluído o campo de E-mails Autorizados) -->
+        <!-- Formulário de Edição do Pet -->
         <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs md:text-sm mt-2">
           <label class="block">Nome: <input id="f-nome" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
           <label class="block">Espécie: 
@@ -203,26 +203,31 @@
 
   </div>
 
-  <!-- Modal Adicionar Novo Pet -->
+  <!-- Modal Adicionar Novo Pet (CORRIGIDO: Formulário Completo) -->
   <div id="modal-novo-pet" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <h3 class="text-lg font-bold text-slate-800">Novo Paciente Pet</h3>
+    <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-lg font-bold text-slate-800">Cadastrar Novo Paciente Pet</h3>
       <form id="form-novo-pet" class="space-y-3 text-xs md:text-sm">
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Nome do Pet *</label>
-          <input id="np-nome" required placeholder="Ex: Theo, Jade..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Espécie *</label>
-          <div class="grid grid-cols-2 gap-3">
-            <label class="border p-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 border-slate-200 font-bold">
-              <input type="radio" name="np-especie" value="Canina" checked class="accent-emerald-600"> 🐶 Cão
-            </label>
-            <label class="border p-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 border-slate-200 font-bold">
-              <input type="radio" name="np-especie" value="Felina" class="accent-emerald-600"> 🐱 Gato
-            </label>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nome do Pet *</label>
+            <input id="np-nome" required placeholder="Ex: Theo, Jade..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Espécie *</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="border p-2.5 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-slate-50 border-slate-200 font-bold text-xs">
+                <input type="radio" name="np-especie" value="Canina" checked class="accent-emerald-600"> 🐶 Cão
+              </label>
+              <label class="border p-2.5 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-slate-50 border-slate-200 font-bold text-xs">
+                <input type="radio" name="np-especie" value="Felina" class="accent-emerald-600"> 🐱 Gato
+              </label>
+            </div>
           </div>
         </div>
+
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Raça *</label>
@@ -237,14 +242,66 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Cor Base da Pelagem</label>
+            <select id="np-cor-base" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+              <option value="#d97706">Caramelo / Castanho</option>
+              <option value="#fef08a">Creme / Amarelo</option>
+              <option value="#1e293b">Preto / Escuro</option>
+              <option value="#ffffff">Branco / Claro</option>
+              <option value="#94a3b8">Cinza / Prateado</option>
+              <option value="#78350f">Chocolate / Marrom</option>
+              <option value="#f97316">Ruivo / Laranja</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Padrão / Textura</label>
+            <select id="np-textura" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+              <option value="Sólido">Sólido (Cor Única)</option>
+              <option value="Manchado">Manchado / Malhado</option>
+              <option value="Bicolor">Bicolor</option>
+              <option value="Tricolor">Tricolor</option>
+              <option value="Tigrado">Tigrado / Atigrado</option>
+              <option value="Merle">Merlé / Degradê</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Peso (kg)</label>
+            <input id="np-peso" placeholder="Ex: 3.5" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Data de Nascimento</label>
+            <input id="np-nascimento" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          </div>
+        </div>
+
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">E-mails Google Autorizados para Editar (separe por vírgula) *</label>
-          <input id="np-emails-autorizados" required placeholder="seu-email@gmail.com, email-esposa@gmail.com" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-mono text-emerald-800" />
+          <label class="block font-semibold text-slate-700 mb-1">Microchip</label>
+          <input id="np-microchip" placeholder="Ex: 900123456789012" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">⭐ Tutor Principal *</label>
           <input id="np-tutor-principal" required placeholder="Ex: Arlindo Santos" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Outros Tutores (Opcional)</label>
+          <input id="np-tutores-outros" placeholder="Ex: Idylla Santos" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">E-mails Google Autorizados para Editar (separe por vírgula) *</label>
+          <input id="np-emails-autorizados" required placeholder="seu-email@gmail.com, email-esposa@gmail.com" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-mono text-emerald-800 bg-emerald-50/30" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Perfil Social (Instagram)</label>
+          <input id="np-perfil-social" placeholder="Ex: @theo_pet" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -288,7 +345,7 @@
     </div>
   </div>
 
-  <!-- Lógica JavaScript com Suporte a Permissões Compartilhadas -->
+  <!-- Lógica JavaScript -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAF_Lni-sw3U6inVwmh2BibJ4Wik0U082w",
@@ -362,7 +419,7 @@
         pets = [];
         userInfo.classList.add('hidden');
         btnLogin.classList.remove('hidden');
-        alertLogin.classList.remove('hidden');
+        alertLogin.classList.add('hidden');
         appContent.classList.add('hidden');
       }
     });
@@ -601,7 +658,13 @@
 
     seletorPet.addEventListener('change', (e) => trocarPetSelecionado(e.target.value));
 
-    btnAbrirModalPet.addEventListener('click', () => modalNovoPet.classList.remove('hidden'));
+    btnAbrirModalPet.addEventListener('click', () => {
+      if (currentUser) {
+        document.getElementById('np-emails-autorizados').value = currentUser.email;
+      }
+      modalNovoPet.classList.remove('hidden');
+    });
+
     btnFecharModalPet.addEventListener('click', () => modalNovoPet.classList.add('hidden'));
 
     formNovoPet.addEventListener('submit', (e) => {
@@ -614,8 +677,15 @@
         especie: especieSel,
         raca: document.getElementById('np-raca').value,
         sexo: document.getElementById('np-sexo').value,
+        corBase: document.getElementById('np-cor-base').value,
+        textura: document.getElementById('np-textura').value,
+        peso: document.getElementById('np-peso').value,
+        nascimento: document.getElementById('np-nascimento').value,
+        microchip: document.getElementById('np-microchip').value,
         tutorPrincipal: document.getElementById('np-tutor-principal').value,
+        tutoresOutros: document.getElementById('np-tutores-outros').value,
         emailsInput: document.getElementById('np-emails-autorizados').value,
+        perfilSocial: document.getElementById('np-perfil-social').value,
         vacinas: []
       };
 
