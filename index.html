@@ -419,7 +419,7 @@
 
         <div class="flex gap-2 pt-2">
           <button id="btn-fechar-modal-medico" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
-          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Médico</button>
+          <button id="btn-salvar-medico" type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Médico</button>
         </div>
       </form>
     </div>
@@ -444,7 +444,7 @@
 
         <div class="flex gap-2 pt-2">
           <button id="btn-fechar-modal-clinica" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
-          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Clínica</button>
+          <button id="btn-salvar-clinica" type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar Clínica</button>
         </div>
       </form>
     </div>
@@ -782,16 +782,22 @@
       }
     });
 
+    function getEmailChave() {
+      return currentUser ? currentUser.email.toLowerCase().replace(/\./g, '_') : null;
+    }
+
     function ouvirDatabaseNuvemCompartilhada() {
+      if (!currentUser) return;
+      const userKey = getEmailChave();
+
       // 1. Ouvir Pets
       database.ref('familias_pets').on('value', (snapshot) => {
         const val = snapshot.val();
         pets = [];
-        if (val && currentUser) {
-          const emailChave = currentUser.email.toLowerCase().replace(/\./g, '_');
+        if (val) {
           Object.keys(val).forEach(key => {
             const petData = val[key];
-            if (petData.tutores_autorizados && petData.tutores_autorizados[emailChave]) {
+            if (petData.tutores_autorizados && petData.tutores_autorizados[userKey]) {
               pets.push({ id: key, ...petData });
             }
           });
@@ -805,7 +811,7 @@
       });
 
       // 2. Ouvir Médicos
-      database.ref('medicos_cadastrados').on('value', (snapshot) => {
+      database.ref(`cadastros_compartilhados/${userKey}/medicos`).on('value', (snapshot) => {
         const val = snapshot.val();
         medicos = [];
         if (val) {
@@ -816,7 +822,7 @@
       });
 
       // 3. Ouvir Clínicas
-      database.ref('clinicas_cadastradas').on('value', (snapshot) => {
+      database.ref(`cadastros_compartilhados/${userKey}/clinicas`).on('value', (snapshot) => {
         const val = snapshot.val();
         clinicas = [];
         if (val) {
@@ -866,23 +872,27 @@
     }
 
     function salvarMedicoNaNuvem(data) {
-      if (!currentUser) return;
-      database.ref(`medicos_cadastrados/${data.id}`).set(data);
+      if (!currentUser) return Promise.reject('Sem usuário logado');
+      const userKey = getEmailChave();
+      return database.ref(`cadastros_compartilhados/${userKey}/medicos/${data.id}`).set(data);
     }
 
     function removerMedicoDaNuvem(id) {
       if (!currentUser) return;
-      database.ref(`medicos_cadastrados/${id}`).remove();
+      const userKey = getEmailChave();
+      database.ref(`cadastros_compartilhados/${userKey}/medicos/${id}`).remove();
     }
 
     function salvarClinicaNaNuvem(data) {
-      if (!currentUser) return;
-      database.ref(`clinicas_cadastradas/${data.id}`).set(data);
+      if (!currentUser) return Promise.reject('Sem usuário logado');
+      const userKey = getEmailChave();
+      return database.ref(`cadastros_compartilhados/${userKey}/clinicas/${data.id}`).set(data);
     }
 
     function removerClinicaDaNuvem(id) {
       if (!currentUser) return;
-      database.ref(`clinicas_cadastradas/${id}`).remove();
+      const userKey = getEmailChave();
+      database.ref(`cadastros_compartilhados/${userKey}/clinicas/${id}`).remove();
     }
 
     function getPetAtivo() {
@@ -1498,8 +1508,12 @@
       modalMedico.classList.remove('hidden');
     }
 
-    formMedico.addEventListener('submit', (e) => {
+    formMedico.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btnSalvar = document.getElementById('btn-salvar-medico');
+      btnSalvar.disabled = true;
+      btnSalvar.textContent = 'Salvando...';
+
       const currentId = document.getElementById('med-id').value;
       const id = currentId && currentId.trim() !== '' ? currentId : ('med-' + Date.now());
       
@@ -1509,9 +1523,16 @@
         crmv: document.getElementById('med-crmv').value.trim()
       };
 
-      salvarMedicoNaNuvem(medicoObjeto);
-      modalMedico.classList.add('hidden');
-      formMedico.reset();
+      try {
+        await salvarMedicoNaNuvem(medicoObjeto);
+        modalMedico.classList.add('hidden');
+        formMedico.reset();
+      } catch (err) {
+        alert("Erro ao salvar médico: " + err.message);
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Salvar Médico';
+      }
     });
 
     // Modais e Forms de Clínica
@@ -1532,8 +1553,12 @@
       modalClinica.classList.remove('hidden');
     }
 
-    formClinica.addEventListener('submit', (e) => {
+    formClinica.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btnSalvar = document.getElementById('btn-salvar-clinica');
+      btnSalvar.disabled = true;
+      btnSalvar.textContent = 'Salvando...';
+
       const currentId = document.getElementById('cli-id').value;
       const id = currentId && currentId.trim() !== '' ? currentId : ('cli-' + Date.now());
 
@@ -1543,9 +1568,16 @@
         endereco: document.getElementById('cli-endereco').value.trim()
       };
 
-      salvarClinicaNaNuvem(clinicaObjeto);
-      modalClinica.classList.add('hidden');
-      formClinica.reset();
+      try {
+        await salvarClinicaNaNuvem(clinicaObjeto);
+        modalClinica.classList.add('hidden');
+        formClinica.reset();
+      } catch (err) {
+        alert("Erro ao salvar clínica: " + err.message);
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Salvar Clínica';
+      }
     });
 
     function prepararModalVacinaParaEspecie(especie) {
