@@ -42,20 +42,18 @@
 
   <div class="max-w-3xl mx-auto space-y-5">
     
-    <!-- Cabeçalho com Status de Login e Sincronização -->
+    <!-- Cabeçalho -->
     <header class="bg-emerald-600 text-white rounded-2xl p-5 md:p-6 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <h1 class="text-xl md:text-2xl font-bold flex items-center gap-2">💉 Carteira Vacinal Digital</h1>
-        <p class="text-emerald-100 text-xs md:text-sm mt-0.5">Sincronizado na nuvem em tempo real (Compartilhado)</p>
+        <p class="text-emerald-100 text-xs md:text-sm mt-0.5">Sincronizado em Tempo Real (Compartilhado)</p>
       </div>
 
       <div id="auth-container" class="flex items-center gap-2 w-full sm:w-auto justify-end">
-        <!-- Botão de Login Google -->
         <button id="btn-login" type="button" class="w-full sm:w-auto bg-white text-emerald-800 hover:bg-emerald-50 text-xs font-bold py-2.5 px-4 rounded-xl transition shadow flex items-center justify-center gap-2">
           <span>🔑 Entrar com Google</span>
         </button>
 
-        <!-- Status de Usuário Logado -->
         <div id="user-info" class="hidden flex items-center gap-2 bg-emerald-700/60 p-1.5 px-3 rounded-xl border border-emerald-500/40 text-xs">
           <img id="user-photo" src="" class="w-6 h-6 rounded-full border border-white" alt="Avatar" />
           <span id="user-name" class="font-semibold truncate max-w-[120px]"></span>
@@ -64,17 +62,17 @@
       </div>
     </header>
 
-    <!-- Tela de Alerta quando NÃO está logado -->
+    <!-- Alerta de Login -->
     <div id="alert-login" class="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-6 text-center space-y-2">
       <div class="text-2xl">🔐</div>
       <h2 class="font-bold text-base">Autenticação Necessária</h2>
-      <p class="text-xs text-amber-700 max-w-md mx-auto">Faça login com sua conta Google autorizada para visualizar e sincronizar os registros dos pets em família.</p>
+      <p class="text-xs text-amber-700 max-w-md mx-auto">Faça login com sua conta do Google para visualizar e atualizar os dados dos pets autorizados.</p>
     </div>
 
-    <!-- Conteúdo Principal da Aplicação -->
+    <!-- Conteúdo Principal -->
     <main id="app-content" class="hidden space-y-5">
 
-      <!-- Seleção e Adição de Pets -->
+      <!-- Seleção de Pets -->
       <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200">
         <label for="seletor-pet" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Selecionar Paciente:</label>
         <div class="flex items-center gap-2">
@@ -128,15 +126,15 @@
             </div>
 
             <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2">
-              <span class="text-slate-400 block text-[11px]">Contas Google Autorizadas para Sincronizar:</span>
-              <div id="v-emails-autorizados" class="text-xs text-slate-700 font-medium mt-0.5"></div>
+              <span class="text-slate-400 block text-[11px]">E-mails Google Autorizados para Editar:</span>
+              <div id="v-emails-autorizados" class="text-xs text-emerald-700 font-mono font-semibold mt-0.5"></div>
             </div>
 
             <div class="col-span-2 sm:col-span-4"><span class="text-slate-400 block text-[11px]">Perfil Social</span><strong id="v-perfil-social" class="text-slate-800">-</strong></div>
           </div>
         </div>
 
-        <!-- Formulário de Edição do Pet -->
+        <!-- Formulário de Edição do Pet (CORRIGIDO: Incluído o campo de E-mails Autorizados) -->
         <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs md:text-sm mt-2">
           <label class="block">Nome: <input id="f-nome" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
           <label class="block">Espécie: 
@@ -178,7 +176,7 @@
           <label class="block sm:col-span-2">Outros Tutores: <input id="f-tutores-outros" placeholder="Ex: Idylla Santos" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           
           <label class="block sm:col-span-2">E-mails Google Autorizados para Editar (separe por vírgula): 
-            <input id="f-emails-autorizados" placeholder="exemplo1@gmail.com, exemplo2@gmail.com" class="w-full border p-2.5 rounded-lg text-sm font-mono text-emerald-700 bg-emerald-50/30" required />
+            <input id="f-emails-autorizados" placeholder="email1@gmail.com, email2@gmail.com" class="w-full border p-2.5 rounded-lg text-sm font-mono text-emerald-800 bg-emerald-50/30" required />
           </label>
 
           <label class="block sm:col-span-2">Perfil Social: <input id="f-perfil-social" placeholder="Ex: @theo_pet" class="w-full border p-2.5 rounded-lg text-sm" /></label>
@@ -189,7 +187,7 @@
         </form>
       </div>
 
-      <!-- Seção de Vacinas -->
+      <!-- Histórico Vacinal -->
       <div class="space-y-4">
         <div class="flex justify-between items-center">
           <h2 class="text-lg md:text-xl font-bold text-slate-800">🛡️ Histórico Vacinal</h2>
@@ -240,7 +238,7 @@
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">E-mails Google Autorizados (separe por vírgula) *</label>
+          <label class="block font-semibold text-slate-700 mb-1">E-mails Google Autorizados para Editar (separe por vírgula) *</label>
           <input id="np-emails-autorizados" required placeholder="seu-email@gmail.com, email-esposa@gmail.com" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-mono text-emerald-800" />
         </div>
 
@@ -290,7 +288,7 @@
     </div>
   </div>
 
-  <!-- Lógica JavaScript com Sincronização Compartilhada -->
+  <!-- Lógica JavaScript com Suporte a Permissões Compartilhadas -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAF_Lni-sw3U6inVwmh2BibJ4Wik0U082w",
@@ -341,7 +339,7 @@
 
     btnLogin.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(err => alert("Erro no login: " + err.message));
+      auth.signInWithPopup(provider).catch(err => alert("Erro ao realizar login: " + err.message));
     });
 
     btnLogout.addEventListener('click', () => auth.signOut());
@@ -356,7 +354,6 @@
         alertLogin.classList.add('hidden');
         appContent.classList.remove('hidden');
 
-        // Preenche o modal de novo pet com o e-mail do criador por padrão
         document.getElementById('np-emails-autorizados').value = user.email;
 
         ouvirDatabaseNuvemCompartilhada();
@@ -370,14 +367,13 @@
       }
     });
 
-    // Escuta todos os pets onde o e-mail do usuário logado está na lista de autorizados
     function ouvirDatabaseNuvemCompartilhada() {
       const familiasRef = database.ref('familias_pets');
       familiasRef.on('value', (snapshot) => {
         const val = snapshot.val();
         pets = [];
         if (val && currentUser) {
-          const emailChave = currentUser.email.replace(/\./g, '_');
+          const emailChave = currentUser.email.toLowerCase().replace(/\./g, '_');
           Object.keys(val).forEach(key => {
             const petData = val[key];
             if (petData.tutores_autorizados && petData.tutores_autorizados[emailChave]) {
@@ -397,9 +393,8 @@
     function salvarPetNaNuvem(petData) {
       if (!currentUser) return;
 
-      // Prepara a lista de permissões por e-mail para o Firebase
       let emailsLista = [];
-      if (typeof petData.emailsInput === 'string') {
+      if (petData.emailsInput && typeof petData.emailsInput === 'string') {
         emailsLista = petData.emailsInput.split(',').map(e => e.trim().toLowerCase());
       } else if (petData.tutores_autorizados) {
         emailsLista = Object.keys(petData.tutores_autorizados).map(e => e.replace(/_/g, '.'));
@@ -469,7 +464,7 @@
     function renderizarPet() {
       const pet = getPetAtivo();
       if (!pet) {
-        petView.innerHTML = '<div class="p-4 text-center text-slate-400">Nenhum pet compartilhado encontrado.</div>';
+        petView.innerHTML = '<div class="p-4 text-center text-slate-400">Nenhum pet cadastrado. Adicione um novo pet acima.</div>';
         tituloPet.textContent = 'Dados do Paciente';
         document.getElementById('lista-vacinas').innerHTML = '';
         return;
@@ -504,7 +499,6 @@
         });
       }
 
-      // Exibe os e-mails autorizados
       const emailsList = pet.tutores_autorizados ? Object.keys(pet.tutores_autorizados).map(e => e.replace(/_/g, '.')) : [];
       document.getElementById('v-emails-autorizados').textContent = emailsList.join(', ');
 
