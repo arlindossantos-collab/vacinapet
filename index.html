@@ -12,6 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
   <!-- Google Places API (Opcional) -->
   <script src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API_DO_GOOGLE&libraries=places" async defer></script>
@@ -46,7 +47,7 @@
     <header class="bg-emerald-600 text-white rounded-2xl p-5 md:p-6 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <h1 class="text-xl md:text-2xl font-bold flex items-center gap-2">💉 Carteira Vacinal Digital</h1>
-        <p class="text-emerald-100 text-xs md:text-sm mt-0.5">Sincronizado em Tempo Real (Compartilhado)</p>
+        <p class="text-emerald-100 text-xs md:text-sm mt-0.5">Sincronizado em Tempo Real (Com Alertas Vacinais)</p>
       </div>
 
       <div id="auth-container" class="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -92,12 +93,16 @@
       <div class="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 space-y-4">
         <div class="flex justify-between items-center border-b border-slate-100 pb-3">
           <div class="flex items-center gap-3">
-            <div id="avatar-pet-display" class="w-12 h-12 rounded-full border-2 border-emerald-500 flex items-center justify-center text-xl shadow-sm relative overflow-hidden bg-slate-100">
-              🐶
+            <div id="avatar-pet-display" class="w-14 h-14 rounded-full border-2 border-emerald-500 flex items-center justify-center text-xl shadow-sm relative overflow-hidden bg-slate-100">
+              <span id="avatar-emoji">🐶</span>
+              <img id="avatar-img" src="" class="hidden w-full h-full object-cover" alt="Foto do Pet" />
             </div>
             <div>
               <h2 id="titulo-pet" class="text-lg md:text-xl font-bold text-slate-800">Dados do Paciente</h2>
-              <span id="badge-textura" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">Sólido</span>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span id="badge-textura" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">Sólido</span>
+                <span id="badge-comprimento" class="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Pelo Curto</span>
+              </div>
             </div>
           </div>
           <button id="btn-editar-pet" type="button" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg transition">
@@ -111,10 +116,12 @@
             <div><span class="text-slate-400 block text-[11px]">Nome</span><strong id="v-nome" class="text-slate-800">-</strong></div>
             <div><span class="text-slate-400 block text-[11px]">Espécie / Raça</span><strong id="v-raca" class="text-slate-800">-</strong></div>
             <div><span class="text-slate-400 block text-[11px]">Sexo</span><strong id="v-sexo" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-400 block text-[11px]">Pelagem / Cor</span><strong id="v-cor" class="text-slate-800">-</strong></div>
+            <div><span class="text-slate-400 block text-[11px]">Pelagem / Cores</span><strong id="v-cor" class="text-slate-800">-</strong></div>
+            <div><span class="text-slate-400 block text-[11px]">Comprimento Pelo</span><strong id="v-pelo" class="text-slate-800">-</strong></div>
             <div><span class="text-slate-400 block text-[11px]">Peso</span><strong id="v-peso" class="text-slate-800">-</strong></div>
             <div><span class="text-slate-400 block text-[11px]">Nascimento</span><strong id="v-nascimento" class="text-slate-800">-</strong></div>
             <div><span class="text-slate-400 block text-[11px]">Idade</span><strong id="v-idade" class="text-slate-800">-</strong></div>
+            <div><span class="text-slate-400 block text-[11px]">Local de Nascimento</span><strong id="v-local-nasc" class="text-slate-800">-</strong></div>
             <div><span class="text-slate-400 block text-[11px]">Microchip</span><strong id="v-microchip" class="text-slate-800">-</strong></div>
             
             <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2.5 mt-1">
@@ -136,6 +143,10 @@
 
         <!-- Formulário de Edição do Pet -->
         <form id="pet-form" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs md:text-sm mt-2">
+          <label class="block sm:col-span-2">Foto do Pet: 
+            <input type="file" id="f-foto" accept="image/*" class="w-full border p-2 rounded-lg text-sm bg-white cursor-pointer" />
+          </label>
+
           <label class="block">Nome: <input id="f-nome" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
           <label class="block">Espécie: 
             <select id="f-especie" class="w-full border p-2.5 rounded-lg bg-white text-sm" required>
@@ -145,7 +156,25 @@
           </label>
           <label class="block">Raça: <input id="f-raca" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
           <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
-          
+
+          <label class="block">Padrão / Textura: 
+            <select id="f-textura" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+              <option value="Sólido">Sólido (Cor Única)</option>
+              <option value="Bicolor">Bicolor</option>
+              <option value="Tricolor">Tricolor</option>
+              <option value="Manchado">Manchado / Malhado</option>
+              <option value="Tigrado">Tigrado / Atigrado</option>
+              <option value="Merle">Merlé / Degradê</option>
+            </select>
+          </label>
+
+          <label class="block">Comprimento do Pelo: 
+            <select id="f-comprimento-pelo" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+              <option value="Curto">Curto</option>
+              <option value="Longo">Longo</option>
+            </select>
+          </label>
+
           <label class="block">Cor Base da Pelagem: 
             <select id="f-cor-base" class="w-full border p-2.5 rounded-lg bg-white text-sm">
               <option value="#d97706">Caramelo / Castanho</option>
@@ -157,19 +186,36 @@
               <option value="#f97316">Ruivo / Laranja</option>
             </select>
           </label>
-          <label class="block">Padrão / Textura: 
-            <select id="f-textura" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-              <option value="Sólido">Sólido (Cor Única)</option>
-              <option value="Manchado">Manchado / Malhado</option>
-              <option value="Bicolor">Bicolor</option>
-              <option value="Tricolor">Tricolor</option>
-              <option value="Tigrado">Tigrado / Atigrado</option>
-              <option value="Merle">Merlé / Degradê</option>
-            </select>
-          </label>
+
+          <div id="box-f-cor-secundaria" class="hidden">
+            <label class="block">Segunda Cor: 
+              <select id="f-cor-secundaria" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+                <option value="Branco">Branco</option>
+                <option value="Preto">Preto</option>
+                <option value="Caramelo">Caramelo</option>
+                <option value="Creme">Creme</option>
+                <option value="Cinza">Cinza</option>
+                <option value="Marrom">Marrom</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="box-f-cor-terciaria" class="hidden">
+            <label class="block">Terceira Cor: 
+              <select id="f-cor-terciaria" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+                <option value="Branco">Branco</option>
+                <option value="Preto">Preto</option>
+                <option value="Caramelo">Caramelo</option>
+                <option value="Creme">Creme</option>
+                <option value="Cinza">Cinza</option>
+                <option value="Marrom">Marrom</option>
+              </select>
+            </label>
+          </div>
 
           <label class="block">Peso (kg): <input id="f-peso" placeholder="Ex: 3.5" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           <label class="block">Data de Nascimento: <input id="f-nascimento" type="date" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+          <label class="block sm:col-span-2">Local de Nascimento: <input id="f-local-nasc" placeholder="Ex: Recife - PE" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           <label class="block sm:col-span-2">Microchip: <input id="f-microchip" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           
           <label class="block sm:col-span-2">⭐ Tutor Principal: <input id="f-tutor-principal" placeholder="Ex: Arlindo Santos" class="w-full border p-2.5 rounded-lg font-semibold text-sm" required /></label>
@@ -182,7 +228,7 @@
           <label class="block sm:col-span-2">Perfil Social: <input id="f-perfil-social" placeholder="Ex: @theo_pet" class="w-full border p-2.5 rounded-lg text-sm" /></label>
 
           <div class="sm:col-span-2 text-right mt-2">
-            <button type="submit" class="w-full sm:w-auto bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">Salvar Alterações</button>
+            <button id="btn-salvar-pet-form" type="submit" class="w-full sm:w-auto bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">Salvar Alterações</button>
           </div>
         </form>
       </div>
@@ -203,12 +249,17 @@
 
   </div>
 
-  <!-- Modal Adicionar Novo Pet (CORRIGIDO: Formulário Completo) -->
+  <!-- Modal Adicionar Novo Pet -->
   <div id="modal-novo-pet" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <h3 class="text-lg font-bold text-slate-800">Cadastrar Novo Paciente Pet</h3>
       <form id="form-novo-pet" class="space-y-3 text-xs md:text-sm">
         
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Foto do Pet (Opcional)</label>
+          <input type="file" id="np-foto" accept="image/*" class="w-full border border-slate-200 p-2 rounded-xl text-sm bg-white cursor-pointer" />
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Nome do Pet *</label>
@@ -244,28 +295,61 @@
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Cor Base da Pelagem</label>
-            <select id="np-cor-base" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
-              <option value="#d97706">Caramelo / Castanho</option>
-              <option value="#fef08a">Creme / Amarelo</option>
-              <option value="#1e293b">Preto / Escuro</option>
-              <option value="#ffffff">Branco / Claro</option>
-              <option value="#94a3b8">Cinza / Prateado</option>
-              <option value="#78350f">Chocolate / Marrom</option>
-              <option value="#f97316">Ruivo / Laranja</option>
-            </select>
-          </div>
-          <div>
             <label class="block font-semibold text-slate-700 mb-1">Padrão / Textura</label>
             <select id="np-textura" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
               <option value="Sólido">Sólido (Cor Única)</option>
-              <option value="Manchado">Manchado / Malhado</option>
               <option value="Bicolor">Bicolor</option>
               <option value="Tricolor">Tricolor</option>
+              <option value="Manchado">Manchado / Malhado</option>
               <option value="Tigrado">Tigrado / Atigrado</option>
               <option value="Merle">Merlé / Degradê</option>
             </select>
           </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Comprimento do Pelo</label>
+            <select id="np-comprimento-pelo" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+              <option value="Curto">Curto</option>
+              <option value="Longo">Longo</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Cor Base da Pelagem</label>
+          <select id="np-cor-base" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+            <option value="#d97706">Caramelo / Castanho</option>
+            <option value="#fef08a">Creme / Amarelo</option>
+            <option value="#1e293b">Preto / Escuro</option>
+            <option value="#ffffff">Branco / Claro</option>
+            <option value="#94a3b8">Cinza / Prateado</option>
+            <option value="#78350f">Chocolate / Marrom</option>
+            <option value="#f97316">Ruivo / Laranja</option>
+          </select>
+        </div>
+
+        <div id="box-np-cor-secundaria" class="hidden">
+          <label class="block font-semibold text-slate-700 mb-1">Segunda Cor</label>
+          <select id="np-cor-secundaria" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+            <option value="Branco">Branco</option>
+            <option value="Preto">Preto</option>
+            <option value="Caramelo">Caramelo</option>
+            <option value="Creme">Creme</option>
+            <option value="Cinza">Cinza</option>
+            <option value="Marrom">Marrom</option>
+          </select>
+        </div>
+
+        <div id="box-np-cor-terciaria" class="hidden">
+          <label class="block font-semibold text-slate-700 mb-1">Terceira Cor</label>
+          <select id="np-cor-terciaria" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+            <option value="Branco">Branco</option>
+            <option value="Preto">Preto</option>
+            <option value="Caramelo">Caramelo</option>
+            <option value="Creme">Creme</option>
+            <option value="Cinza">Cinza</option>
+            <option value="Marrom">Marrom</option>
+          </select>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -277,6 +361,11 @@
             <label class="block font-semibold text-slate-700 mb-1">Data de Nascimento</label>
             <input id="np-nascimento" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
           </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Local de Nascimento</label>
+          <input id="np-local-nasc" placeholder="Ex: Recife - PE" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div>
@@ -306,7 +395,7 @@
 
         <div class="flex gap-2 pt-2">
           <button id="btn-fechar-modal-pet" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
-          <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Cadastrar Pet</button>
+          <button id="btn-cadastrar-novo-pet" type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Cadastrar Pet</button>
         </div>
       </form>
     </div>
@@ -318,20 +407,31 @@
       <h3 id="modal-vacina-titulo" class="text-lg font-bold text-slate-800">Nova Vacina</h3>
       <form id="form-vacina" class="space-y-3">
         <input type="hidden" id="vac-id" />
+        
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Nome da Vacina *</label>
           <input id="vac-nome" required placeholder="Ex: Canigen R, GiardiaVax..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
+        
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Descrição / Indicação</label>
           <input id="vac-desc" placeholder="Ex: Antirrábica..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
-        <div class="grid grid-cols-2 gap-2">
+
+        <!-- Opção de Dose Única -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-700">
+            <input type="checkbox" id="vac-dose-unica" class="w-4 h-4 accent-emerald-600 rounded">
+            <span>É dose única? (Sem próxima dose)</span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Data Aplicação *</label>
             <input id="vac-data-app" required type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
           </div>
-          <div>
+          <div id="box-data-prox">
             <label class="block font-semibold text-slate-700 mb-1">Próxima Dose</label>
             <input id="vac-data-prox" type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
           </div>
@@ -361,6 +461,7 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
+    const storage = firebase.storage();
 
     let currentUser = null;
     let pets = [];
@@ -386,13 +487,49 @@
     const petForm = document.getElementById('pet-form');
     const tituloPet = document.getElementById('titulo-pet');
     const avatarPetDisplay = document.getElementById('avatar-pet-display');
+    const avatarEmoji = document.getElementById('avatar-emoji');
+    const avatarImg = document.getElementById('avatar-img');
     const badgeTextura = document.getElementById('badge-textura');
+    const badgeComprimento = document.getElementById('badge-comprimento');
 
     const btnAbrirModal = document.getElementById('btn-abrir-modal');
     const btnFecharModal = document.getElementById('btn-fechar-modal');
     const modalVacina = document.getElementById('modal-vacina');
     const modalVacinaTitulo = document.getElementById('modal-vacina-titulo');
     const formVacina = document.getElementById('form-vacina');
+
+    const chkDoseUnica = document.getElementById('vac-dose-unica');
+    const boxDataProx = document.getElementById('box-data-prox');
+
+    chkDoseUnica.addEventListener('change', () => {
+      if (chkDoseUnica.checked) {
+        boxDataProx.classList.add('hidden');
+        document.getElementById('vac-data-prox').value = '';
+      } else {
+        boxDataProx.classList.remove('hidden');
+      }
+    });
+
+    // Controla opções de cores secundárias e terciárias no cadastro e edição
+    function gerenciarCamposCores(texturaElId, boxSecId, boxTerId) {
+      const val = document.getElementById(texturaElId).value;
+      const boxSec = document.getElementById(boxSecId);
+      const boxTer = document.getElementById(boxTerId);
+
+      if (val === 'Bicolor' || val === 'Manchado') {
+        boxSec.classList.remove('hidden');
+        boxTer.classList.add('hidden');
+      } else if (val === 'Tricolor') {
+        boxSec.classList.remove('hidden');
+        boxTer.classList.remove('hidden');
+      } else {
+        boxSec.classList.add('hidden');
+        boxTer.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('np-textura').addEventListener('change', () => gerenciarCamposCores('np-textura', 'box-np-cor-secundaria', 'box-np-cor-terciaria'));
+    document.getElementById('f-textura').addEventListener('change', () => gerenciarCamposCores('f-textura', 'box-f-cor-secundaria', 'box-f-cor-terciaria'));
 
     btnLogin.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -445,6 +582,14 @@
         atualizarSeletorPets();
         renderizarPet();
       });
+    }
+
+    async function fazerUploadFotoPet(fileInputEl, petId) {
+      if (!fileInputEl.files || fileInputEl.files.length === 0) return null;
+      const file = fileInputEl.files[0];
+      const storageRef = storage.ref(`fotos_pets/${petId}/${file.name}`);
+      const snapshot = await storageRef.put(file);
+      return await snapshot.ref.getDownloadURL();
     }
 
     function salvarPetNaNuvem(petData) {
@@ -531,16 +676,36 @@
       tituloPet.textContent = `${pet.nome}`;
 
       avatarPetDisplay.style.backgroundColor = pet.corBase || '#f3f4f6';
-      avatarPetDisplay.textContent = emoji;
+      
+      if (pet.fotoUrl) {
+        avatarEmoji.classList.add('hidden');
+        avatarImg.src = pet.fotoUrl;
+        avatarImg.classList.remove('hidden');
+      } else {
+        avatarImg.classList.add('hidden');
+        avatarEmoji.textContent = emoji;
+        avatarEmoji.classList.remove('hidden');
+      }
+
       badgeTextura.textContent = `${pet.textura || 'Sólido'}`;
+      badgeComprimento.textContent = `Pelo ${pet.comprimentoPelo || 'Curto'}`;
 
       document.getElementById('v-nome').textContent = pet.nome;
       document.getElementById('v-raca').textContent = `${pet.especie === 'Felina' ? 'Felina' : 'Canina'} (${pet.raca})`;
       document.getElementById('v-sexo').textContent = pet.sexo;
-      document.getElementById('v-cor').textContent = `${pet.textura || 'Sólido'}`;
+
+      // Monta String de Cores
+      let listaCoresStr = pet.textura || 'Sólido';
+      if (pet.corSecundaria) listaCoresStr += ` (${pet.corSecundaria}`;
+      if (pet.corTerciaria) listaCoresStr += ` + ${pet.corTerciaria}`;
+      if (pet.corSecundaria) listaCoresStr += `)`;
+      document.getElementById('v-cor').textContent = listaCoresStr;
+
+      document.getElementById('v-pelo').textContent = pet.comprimentoPelo || 'Curto';
       document.getElementById('v-peso').textContent = pet.peso ? `${pet.peso} kg` : '-';
       document.getElementById('v-nascimento').textContent = pet.nascimento ? new Date(pet.nascimento + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
       document.getElementById('v-idade').textContent = calcularIdade(pet.nascimento);
+      document.getElementById('v-local-nasc').textContent = pet.localNascimento || '-';
       document.getElementById('v-microchip').textContent = pet.microchip || '-';
       
       document.getElementById('v-tutor-principal').innerHTML = `⭐ Principal: <strong>${pet.tutorPrincipal || '-'}</strong>`;
@@ -567,20 +732,26 @@
         socialEl.textContent = '-';
       }
 
+      // Preenche Formulário de Edição
       document.getElementById('f-nome').value = pet.nome || '';
       document.getElementById('f-especie').value = pet.especie || 'Canina';
       document.getElementById('f-raca').value = pet.raca || '';
       document.getElementById('f-sexo').value = pet.sexo || '';
-      document.getElementById('f-cor-base').value = pet.corBase || '#d97706';
       document.getElementById('f-textura').value = pet.textura || 'Sólido';
+      document.getElementById('f-comprimento-pelo').value = pet.comprimentoPelo || 'Curto';
+      document.getElementById('f-cor-base').value = pet.corBase || '#d97706';
+      document.getElementById('f-cor-secundaria').value = pet.corSecundaria || 'Branco';
+      document.getElementById('f-cor-terciaria').value = pet.corTerciaria || 'Branco';
       document.getElementById('f-peso').value = pet.peso || '';
       document.getElementById('f-nascimento').value = pet.nascimento || '';
+      document.getElementById('f-local-nasc').value = pet.localNascimento || '';
       document.getElementById('f-microchip').value = pet.microchip || '';
       document.getElementById('f-tutor-principal').value = pet.tutorPrincipal || '';
       document.getElementById('f-tutores-outros').value = pet.tutoresOutros || '';
       document.getElementById('f-emails-autorizados').value = emailsList.join(', ');
       document.getElementById('f-perfil-social').value = pet.perfilSocial || '';
 
+      gerenciarCamposCores('f-textura', 'box-f-cor-secundaria', 'box-f-cor-terciaria');
       renderizarVacinas();
     }
 
@@ -596,12 +767,75 @@
         return;
       }
 
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
       vacinasLista.forEach(v => {
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-slate-200 space-y-2.5";
-
         const dataApp = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
-        const dataProx = v.dataProxima ? new Date(v.dataProxima + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não agendado';
+
+        let proxHtml = '';
+        let cardBgBorder = "bg-white border-slate-200";
+
+        if (v.doseUnica) {
+          proxHtml = `
+            <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+              <span class="block text-emerald-700 font-semibold">Tipo de Dose</span>
+              <strong class="text-emerald-900">Dose Única Aplicada ✅</strong>
+            </div>
+          `;
+        } else if (v.dataProxima) {
+          const dtProx = new Date(v.dataProxima + 'T00:00:00');
+          const diffTempo = dtProx.getTime() - hoje.getTime();
+          const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
+          const dataProxStr = dtProx.toLocaleDateString('pt-BR');
+
+          if (diffDias < 0) {
+            // Atrasado
+            cardBgBorder = "bg-red-50/40 border-red-200";
+            proxHtml = `
+              <div class="bg-red-100 p-2.5 rounded-lg border border-red-200 text-red-900">
+                <span class="block text-red-600 font-bold">Próxima Dose (${dataProxStr})</span>
+                <strong>⚠️ Atrasada há ${Math.abs(diffDias)} dia(s)</strong>
+              </div>
+            `;
+          } else if (diffDias === 0) {
+            // Hoje
+            cardBgBorder = "bg-red-50/60 border-red-300";
+            proxHtml = `
+              <div class="bg-red-500 text-white p-2.5 rounded-lg font-bold">
+                <span class="block text-red-100 text-[11px]">Próxima Dose</span>
+                🚨 APLICAR HOJE! (${dataProxStr})
+              </div>
+            `;
+          } else if (diffDias <= 30) {
+            // Alerta Amarelo/Laranja
+            cardBgBorder = "bg-amber-50/40 border-amber-200";
+            proxHtml = `
+              <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-300 text-amber-900">
+                <span class="block text-amber-700 font-bold">Próxima Dose (${dataProxStr})</span>
+                <strong>⏳ Faltam ${diffDias} dias</strong>
+              </div>
+            `;
+          } else {
+            // Verde
+            proxHtml = `
+              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
+                <span class="block text-emerald-700 font-bold">Próxima Dose (${dataProxStr})</span>
+                <strong>Faltam ${diffDias} dias</strong>
+              </div>
+            `;
+          }
+        } else {
+          proxHtml = `
+            <div class="bg-slate-50 p-2.5 rounded-lg">
+              <span class="block text-slate-400">Próxima Dose</span>
+              <strong>Não agendado</strong>
+            </div>
+          `;
+        }
+
+        card.className = `${cardBgBorder} rounded-2xl p-4 md:p-5 shadow-sm border space-y-2.5`;
 
         card.innerHTML = `
           <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
@@ -615,16 +849,12 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-600">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
             <div class="bg-slate-50 p-2.5 rounded-lg">
               <span class="block text-slate-400">Aplicação</span>
               <strong>${dataApp}</strong>
             </div>
-
-            <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-100">
-              <span class="block text-amber-600 font-medium">Próxima Dose</span>
-              <strong class="text-amber-800">${dataProx}</strong>
-            </div>
+            ${proxHtml}
           </div>
         `;
 
@@ -662,30 +892,48 @@
       if (currentUser) {
         document.getElementById('np-emails-autorizados').value = currentUser.email;
       }
+      gerenciarCamposCores('np-textura', 'box-np-cor-secundaria', 'box-np-cor-terciaria');
       modalNovoPet.classList.remove('hidden');
     });
 
     btnFecharModalPet.addEventListener('click', () => modalNovoPet.classList.add('hidden'));
 
-    formNovoPet.addEventListener('submit', (e) => {
+    formNovoPet.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btnSubmit = document.getElementById('btn-cadastrar-novo-pet');
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Salvando...';
+
       const especieSel = document.querySelector('input[name="np-especie"]:checked').value;
-      
+      const petId = 'pet-' + Date.now();
+
+      let urlFoto = null;
+      try {
+        urlFoto = await fazerUploadFotoPet(document.getElementById('np-foto'), petId);
+      } catch (err) {
+        console.error("Erro no upload da foto:", err);
+      }
+
       const novo = {
-        id: 'pet-' + Date.now(),
+        id: petId,
         nome: document.getElementById('np-nome').value,
         especie: especieSel,
         raca: document.getElementById('np-raca').value,
         sexo: document.getElementById('np-sexo').value,
-        corBase: document.getElementById('np-cor-base').value,
         textura: document.getElementById('np-textura').value,
+        comprimentoPelo: document.getElementById('np-comprimento-pelo').value,
+        corBase: document.getElementById('np-cor-base').value,
+        corSecundaria: document.getElementById('np-cor-secundaria').value,
+        corTerciaria: document.getElementById('np-cor-terciaria').value,
         peso: document.getElementById('np-peso').value,
         nascimento: document.getElementById('np-nascimento').value,
+        localNascimento: document.getElementById('np-local-nasc').value,
         microchip: document.getElementById('np-microchip').value,
         tutorPrincipal: document.getElementById('np-tutor-principal').value,
         tutoresOutros: document.getElementById('np-tutores-outros').value,
         emailsInput: document.getElementById('np-emails-autorizados').value,
         perfilSocial: document.getElementById('np-perfil-social').value,
+        fotoUrl: urlFoto || '',
         vacinas: []
       };
 
@@ -693,6 +941,8 @@
       salvarPetNaNuvem(novo);
       modalNovoPet.classList.add('hidden');
       formNovoPet.reset();
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Cadastrar Pet';
     });
 
     btnDeletarPet.addEventListener('click', () => {
@@ -716,18 +966,33 @@
       }
     });
 
-    petForm.addEventListener('submit', (e) => {
+    petForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const pet = getPetAtivo();
       if (pet) {
+        const btnSalvar = document.getElementById('btn-salvar-pet-form');
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = 'Enviando...';
+
+        try {
+          const novaFotoUrl = await fazerUploadFotoPet(document.getElementById('f-foto'), pet.id);
+          if (novaFotoUrl) pet.fotoUrl = novaFotoUrl;
+        } catch (err) {
+          console.error("Erro no upload da foto:", err);
+        }
+
         pet.nome = document.getElementById('f-nome').value;
         pet.especie = document.getElementById('f-especie').value;
         pet.raca = document.getElementById('f-raca').value;
         pet.sexo = document.getElementById('f-sexo').value;
-        pet.corBase = document.getElementById('f-cor-base').value;
         pet.textura = document.getElementById('f-textura').value;
+        pet.comprimentoPelo = document.getElementById('f-comprimento-pelo').value;
+        pet.corBase = document.getElementById('f-cor-base').value;
+        pet.corSecundaria = document.getElementById('f-cor-secundaria').value;
+        pet.corTerciaria = document.getElementById('f-cor-terciaria').value;
         pet.peso = document.getElementById('f-peso').value;
         pet.nascimento = document.getElementById('f-nascimento').value;
+        pet.localNascimento = document.getElementById('f-local-nasc').value;
         pet.microchip = document.getElementById('f-microchip').value;
         pet.tutorPrincipal = document.getElementById('f-tutor-principal').value;
         pet.tutoresOutros = document.getElementById('f-tutores-outros').value;
@@ -738,6 +1003,8 @@
         petForm.classList.add('hidden');
         petView.classList.remove('hidden');
         btnEditarPet.textContent = 'Editar Dados';
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Salvar Alterações';
       }
     });
 
@@ -745,8 +1012,10 @@
       document.getElementById('vac-id').value = '';
       document.getElementById('vac-nome').value = '';
       document.getElementById('vac-desc').value = '';
+      document.getElementById('vac-dose-unica').checked = false;
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
+      boxDataProx.classList.remove('hidden');
     }
 
     function abrirModalVacinaParaNova() {
@@ -763,6 +1032,15 @@
       document.getElementById('vac-id').value = vacina.id;
       document.getElementById('vac-nome').value = vacina.nome || '';
       document.getElementById('vac-desc').value = vacina.descricao || '';
+      
+      const doseUnica = !!vacina.doseUnica;
+      document.getElementById('vac-dose-unica').checked = doseUnica;
+      if (doseUnica) {
+        boxDataProx.classList.add('hidden');
+      } else {
+        boxDataProx.classList.remove('hidden');
+      }
+
       document.getElementById('vac-data-app').value = vacina.dataAplicacao || '';
       document.getElementById('vac-data-prox').value = vacina.dataProxima || '';
 
@@ -779,11 +1057,14 @@
       if (!pet) return;
 
       const vacId = document.getElementById('vac-id').value;
+      const isDoseUnica = document.getElementById('vac-dose-unica').checked;
+
       const vacData = {
         nome: document.getElementById('vac-nome').value,
         descricao: document.getElementById('vac-desc').value,
+        doseUnica: isDoseUnica,
         dataAplicacao: document.getElementById('vac-data-app').value,
-        dataProxima: document.getElementById('vac-data-prox').value
+        dataProxima: isDoseUnica ? '' : document.getElementById('vac-data-prox').value
       };
 
       let vacinasList = pet.vacinas ? (Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas)) : [];
