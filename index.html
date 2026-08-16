@@ -18,12 +18,12 @@
 
   <div class="max-w-3xl mx-auto space-y-5">
     
-    <!-- Cabeçalho Ajustado -->
+    <!-- Cabeçalho com Logo Ampliada -->
     <header class="bg-emerald-600 text-white rounded-2xl p-5 md:p-6 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div class="flex items-center gap-3">
-        <img src="logo.png" alt="Logo" class="h-12 md:h-14 w-auto object-contain bg-white/10 rounded-xl p-1 border border-white/20" />
+      <div class="flex items-center gap-4">
+        <img src="logo.png" alt="Logo" class="h-20 md:h-24 w-auto object-contain drop-shadow-md" />
         <div>
-          <p class="text-white text-sm md:text-base font-semibold">Controle de vacinas de seus pets.</p>
+          <p class="text-white text-base md:text-lg font-bold leading-tight">Controle de vacinas de seus pets.</p>
         </div>
       </div>
 
@@ -214,14 +214,26 @@
 
         <!-- Histórico Vacinal -->
         <div class="space-y-4">
-          <div class="flex justify-between items-center">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <h2 class="text-lg md:text-xl font-bold text-slate-800">🛡️ Histórico Vacinal</h2>
-            <button id="btn-abrir-modal" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs md:text-sm px-4 py-2.5 rounded-xl shadow transition">
+            <button id="btn-abrir-modal" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs md:text-sm px-4 py-2.5 rounded-xl shadow transition w-full sm:w-auto">
               + Registrar Vacina
             </button>
           </div>
 
-          <div id="lista-vacinas" class="space-y-3"></div>
+          <!-- Bar de Filtros por Status -->
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Filtrar por Status:</span>
+            <div class="flex flex-wrap gap-1.5 w-full">
+              <button data-filtro="todos" class="btn-filtro-status px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white transition">Todas</button>
+              <button data-filtro="unica" class="btn-filtro-status px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Dose Única</button>
+              <button data-filtro="completo" class="btn-filtro-status px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Ciclo Completo</button>
+              <button data-filtro="pendente" class="btn-filtro-status px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Pendente</button>
+            </div>
+          </div>
+
+          <!-- Container do Histórico de Vacinas Agrupadas por Mês -->
+          <div id="lista-vacinas" class="space-y-6"></div>
         </div>
 
       </div>
@@ -598,6 +610,7 @@
     let medicos = [];
     let clinicas = [];
     let petAtualId = null;
+    let filtroStatusAtual = 'todos';
 
     const btnLogin = document.getElementById('btn-login');
     const btnLogout = document.getElementById('btn-logout');
@@ -656,6 +669,18 @@
     
     const vacSeletorMedico = document.getElementById('vac-seletor-medico');
     const vacSeletorClinica = document.getElementById('vac-seletor-clinica');
+
+    // Configurar botões de filtro
+    document.querySelectorAll('.btn-filtro-status').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.btn-filtro-status').forEach(b => {
+          b.className = "btn-filtro-status px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+        });
+        e.currentTarget.className = "btn-filtro-status px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white transition";
+        filtroStatusAtual = e.currentTarget.getAttribute('data-filtro');
+        renderizarVacinas();
+      });
+    });
 
     // Alternar Abas
     function resetarEstiloAbas() {
@@ -1125,120 +1150,172 @@
       container.innerHTML = '';
       const pet = getPetAtivo();
 
-      const vacinasLista = pet && pet.vacinas ? (Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas)) : [];
+      let vacinasLista = pet && pet.vacinas ? (Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas)) : [];
 
       if (!pet || vacinasLista.length === 0) {
         container.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-slate-400 border border-slate-200">Nenhuma vacina registrada.</div>`;
         return;
       }
 
+      // Aplicação do Filtro por Status
+      if (filtroStatusAtual === 'unica') {
+        vacinasLista = vacinasLista.filter(v => v.cicloConcluido && (!v.doseInicial || !v.ultimaDose || v.doseInicial === v.ultimaDose));
+      } else if (filtroStatusAtual === 'completo') {
+        vacinasLista = vacinasLista.filter(v => !!v.cicloConcluido);
+      } else if (filtroStatusAtual === 'pendente') {
+        vacinasLista = vacinasLista.filter(v => !v.cicloConcluido);
+      }
+
+      if (vacinasLista.length === 0) {
+        container.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-slate-400 border border-slate-200">Nenhuma vacina encontrada para este filtro.</div>`;
+        return;
+      }
+
+      // Agrupar vacinas por Mês (Analisando data de referência: Próxima Dose > Última Dose > Dose Inicial)
+      const gruposMes = {};
+
+      vacinasLista.forEach(v => {
+        let dataRef = v.dataProxima || v.ultimaDose || v.doseInicial;
+        let chaveMes = "Sem data definida";
+
+        if (dataRef) {
+          const partes = dataRef.split('-');
+          if (partes.length === 3) {
+            const ano = partes[0];
+            const mesIdx = parseInt(partes[1], 10) - 1;
+            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            chaveMes = `${nomesMeses[mesIdx]} / ${ano}`;
+          }
+        }
+
+        if (!gruposMes[chaveMes]) gruposMes[chaveMes] = [];
+        gruposMes[chaveMes].push(v);
+      });
+
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
 
-      vacinasLista.forEach(v => {
-        const card = document.createElement('div');
-        const dtInicialStr = v.doseInicial ? new Date(v.doseInicial + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
-        const dtUltimaStr = v.ultimaDose ? new Date(v.ultimaDose + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+      // Renderizar por grupos de mês
+      Object.keys(gruposMes).forEach(mesTitulo => {
+        const blocoMes = document.createElement('div');
+        blocoMes.className = "space-y-3";
 
-        let statusHtml = '';
-        let cardBgBorder = "bg-white border-slate-200";
-        let acaoAgendaHtml = '';
-
-        if (v.cicloConcluido) {
-          statusHtml = `
-            <div class="col-span-1 sm:col-span-2 bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-900 flex items-center gap-2">
-              <span class="text-lg">✅</span>
-              <div>
-                <span class="block text-emerald-700 font-bold text-xs uppercase tracking-wider">Status</span>
-                <strong class="text-sm">Ciclo de imunização concluído</strong>
-              </div>
-            </div>
-          `;
-        } else if (v.dataProxima) {
-          const dtProx = new Date(v.dataProxima + 'T00:00:00');
-          const diffTempo = dtProx.getTime() - hoje.getTime();
-          const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
-          const dtProxStr = dtProx.toLocaleDateString('pt-BR');
-
-          let msgDias = `Faltam ${diffDias} dias`;
-          if (diffDias === 0) msgDias = "🚨 APLICAR HOJE!";
-          else if (diffDias < 0) msgDias = `⚠️ Atrasada há ${Math.abs(diffDias)} dias`;
-
-          if (diffDias < 0) cardBgBorder = "bg-amber-50/40 border-amber-300";
-          else if (diffDias === 0) cardBgBorder = "bg-red-50/60 border-red-300";
-
-          statusHtml = `
-            <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
-              <div class="flex justify-between items-center">
-                <span class="text-slate-500 font-semibold text-xs">Próxima Dose Agendada:</span>
-                <span class="font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-emerald-700'}">${dtProxStr}</span>
-              </div>
-              <div class="text-xs font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-slate-700'}">
-                ⏳ ${msgDias}
-              </div>
-            </div>
-          `;
-
-          const linkAgenda = gerarLinkGoogleAgenda(v, pet.nome);
-          acaoAgendaHtml = `
-            <a href="${linkAgenda}" target="_blank" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 border border-blue-200 shadow-sm mt-1">
-              📅 Adicionar Lembrete no Google Agenda
-            </a>
-          `;
-        } else {
-          statusHtml = `
-            <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-              <span class="block text-slate-400 text-xs">Status</span>
-              <strong class="text-slate-700 text-xs">Sem próxima dose agendada</strong>
-            </div>
-          `;
-        }
-
-        let vetInfoHtml = '';
-        if (v.vetNome || v.vetCrmv || v.clinicaNome || v.clinicaEndereco) {
-          vetInfoHtml = `
-            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-600 space-y-1">
-              <span class="font-bold text-slate-700 block flex items-center gap-1">🩺 Responsável Técnico & Local:</span>
-              <div class="flex flex-wrap gap-x-3 gap-y-0.5">
-                ${v.vetNome ? `<span><strong>Vet:</strong> ${v.vetNome} ${v.vetCrmv ? `(${v.vetCrmv})` : ''}</span>` : ''}
-                ${v.clinicaNome ? `<span><strong>Clínica:</strong> ${v.clinicaNome}</span>` : ''}
-              </div>
-              ${v.clinicaEndereco ? `<div class="text-[10px] text-slate-500">📍 ${v.clinicaEndereco}</div>` : ''}
-            </div>
-          `;
-        }
-
-        card.className = `${cardBgBorder} rounded-2xl p-4 md:p-5 shadow-sm border space-y-2.5`;
-
-        card.innerHTML = `
-          <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
-            <div>
-              <h3 class="text-base font-bold text-slate-800">💉 ${v.nome}</h3>
-              ${v.descricao ? `<p class="text-xs text-slate-500 mt-0.5">${v.descricao}</p>` : ''}
-            </div>
-            <div class="flex items-center gap-2">
-              <button data-id="${v.id}" class="btn-editar-vacina text-slate-400 hover:text-emerald-600 transition text-sm p-1" title="Editar">✏️</button>
-              <button data-id="${v.id}" class="btn-deletar-vacina text-slate-300 hover:text-red-500 transition text-sm p-1" title="Deletar">🗑️</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span class="block text-slate-400 text-[10px] uppercase font-bold">Dose Inicial</span>
-              <strong class="text-slate-800">${dtInicialStr}</strong>
-            </div>
-            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span class="block text-slate-400 text-[10px] uppercase font-bold">Última Dose</span>
-              <strong class="text-slate-800">${dtUltimaStr}</strong>
-            </div>
-            ${statusHtml}
-          </div>
-
-          ${vetInfoHtml}
-          ${acaoAgendaHtml}
+        const tituloHeader = document.createElement('div');
+        tituloHeader.className = "flex items-center gap-2 border-b-2 border-emerald-500/30 pb-1.5 pt-2";
+        tituloHeader.innerHTML = `
+          <span class="text-emerald-700 font-bold text-sm md:text-base">📅 ${mesTitulo}</span>
+          <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${gruposMes[mesTitulo].length} ${gruposMes[mesTitulo].length === 1 ? 'vacina' : 'vacinas'}</span>
         `;
+        blocoMes.appendChild(tituloHeader);
 
-        container.appendChild(card);
+        gruposMes[mesTitulo].forEach(v => {
+          const card = document.createElement('div');
+          const dtInicialStr = v.doseInicial ? new Date(v.doseInicial + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+          const dtUltimaStr = v.ultimaDose ? new Date(v.ultimaDose + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+
+          let statusHtml = '';
+          let cardBgBorder = "bg-white border-slate-200";
+          let acaoAgendaHtml = '';
+
+          if (v.cicloConcluido) {
+            const isDoseUnica = (!v.doseInicial || !v.ultimaDose || v.doseInicial === v.ultimaDose);
+            statusHtml = `
+              <div class="col-span-1 sm:col-span-2 bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-900 flex items-center gap-2">
+                <span class="text-lg">✅</span>
+                <div>
+                  <span class="block text-emerald-700 font-bold text-xs uppercase tracking-wider">Status</span>
+                  <strong class="text-sm">${isDoseUnica ? 'Dose única concluída' : 'Ciclo de imunização concluído'}</strong>
+                </div>
+              </div>
+            `;
+          } else if (v.dataProxima) {
+            const dtProx = new Date(v.dataProxima + 'T00:00:00');
+            const diffTempo = dtProx.getTime() - hoje.getTime();
+            const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
+            const dtProxStr = dtProx.toLocaleDateString('pt-BR');
+
+            let msgDias = `Faltam ${diffDias} dias`;
+            if (diffDias === 0) msgDias = "🚨 APLICAR HOJE!";
+            else if (diffDias < 0) msgDias = `⚠️ Atrasada há ${Math.abs(diffDias)} dias`;
+
+            if (diffDias < 0) cardBgBorder = "bg-amber-50/40 border-amber-300";
+            else if (diffDias === 0) cardBgBorder = "bg-red-50/60 border-red-300";
+
+            statusHtml = `
+              <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-500 font-semibold text-xs">Próxima Dose Agendada:</span>
+                  <span class="font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-emerald-700'}">${dtProxStr}</span>
+                </div>
+                <div class="text-xs font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-slate-700'}">
+                  ⏳ ${msgDias}
+                </div>
+              </div>
+            `;
+
+            const linkAgenda = gerarLinkGoogleAgenda(v, pet.nome);
+            acaoAgendaHtml = `
+              <a href="${linkAgenda}" target="_blank" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 border border-blue-200 shadow-sm mt-1">
+                📅 Adicionar Lembrete no Google Agenda
+              </a>
+            `;
+          } else {
+            statusHtml = `
+              <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <span class="block text-slate-400 text-xs">Status</span>
+                <strong class="text-slate-700 text-xs">Sem próxima dose agendada (Pendente)</strong>
+              </div>
+            `;
+          }
+
+          let vetInfoHtml = '';
+          if (v.vetNome || v.vetCrmv || v.clinicaNome || v.clinicaEndereco) {
+            vetInfoHtml = `
+              <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-600 space-y-1">
+                <span class="font-bold text-slate-700 block flex items-center gap-1">🩺 Responsável Técnico & Local:</span>
+                <div class="flex flex-wrap gap-x-3 gap-y-0.5">
+                  ${v.vetNome ? `<span><strong>Vet:</strong> ${v.vetNome} ${v.vetCrmv ? `(${v.vetCrmv})` : ''}</span>` : ''}
+                  ${v.clinicaNome ? `<span><strong>Clínica:</strong> ${v.clinicaNome}</span>` : ''}
+                </div>
+                ${v.clinicaEndereco ? `<div class="text-[10px] text-slate-500">📍 ${v.clinicaEndereco}</div>` : ''}
+              </div>
+            `;
+          }
+
+          card.className = `${cardBgBorder} rounded-2xl p-4 md:p-5 shadow-sm border space-y-2.5`;
+
+          card.innerHTML = `
+            <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
+              <div>
+                <h3 class="text-base font-bold text-slate-800">💉 ${v.nome}</h3>
+                ${v.descricao ? `<p class="text-xs text-slate-500 mt-0.5">${v.descricao}</p>` : ''}
+              </div>
+              <div class="flex items-center gap-2">
+                <button data-id="${v.id}" class="btn-editar-vacina text-slate-400 hover:text-emerald-600 transition text-sm p-1" title="Editar">✏️</button>
+                <button data-id="${v.id}" class="btn-deletar-vacina text-slate-300 hover:text-red-500 transition text-sm p-1" title="Deletar">🗑️</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <span class="block text-slate-400 text-[10px] uppercase font-bold">Dose Inicial</span>
+                <strong class="text-slate-800">${dtInicialStr}</strong>
+              </div>
+              <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <span class="block text-slate-400 text-[10px] uppercase font-bold">Última Dose</span>
+                <strong class="text-slate-800">${dtUltimaStr}</strong>
+              </div>
+              ${statusHtml}
+            </div>
+
+            ${vetInfoHtml}
+            ${acaoAgendaHtml}
+          `;
+
+          blocoMes.appendChild(card);
+        });
+
+        container.appendChild(blocoMes);
       });
 
       document.querySelectorAll('.btn-editar-vacina').forEach(btn => {
