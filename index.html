@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carteira de Vacinação Pet</title>
+  <title>Carteira de Vacinação Pet - Compartilhada</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -46,7 +46,7 @@
     <header class="bg-emerald-600 text-white rounded-2xl p-5 md:p-6 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <h1 class="text-xl md:text-2xl font-bold flex items-center gap-2">💉 Carteira Vacinal Digital</h1>
-        <p class="text-emerald-100 text-xs md:text-sm mt-0.5">Sincronizado na nuvem em tempo real</p>
+        <p class="text-emerald-100 text-xs md:text-sm mt-0.5">Sincronizado na nuvem em tempo real (Compartilhado)</p>
       </div>
 
       <div id="auth-container" class="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -68,10 +68,10 @@
     <div id="alert-login" class="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-6 text-center space-y-2">
       <div class="text-2xl">🔐</div>
       <h2 class="font-bold text-base">Autenticação Necessária</h2>
-      <p class="text-xs text-amber-700 max-w-md mx-auto">Para acessar e sincronizar os dados dos seus pets com segurança entre seus dispositivos, faça login com sua conta do Google.</p>
+      <p class="text-xs text-amber-700 max-w-md mx-auto">Faça login com sua conta Google autorizada para visualizar e sincronizar os registros dos pets em família.</p>
     </div>
 
-    <!-- Conteúdo Principal da Aplicação (Visível apenas após Login) -->
+    <!-- Conteúdo Principal da Aplicação -->
     <main id="app-content" class="hidden space-y-5">
 
       <!-- Seleção e Adição de Pets -->
@@ -127,6 +127,11 @@
               </div>
             </div>
 
+            <div class="col-span-2 sm:col-span-4 border-t border-slate-200 pt-2">
+              <span class="text-slate-400 block text-[11px]">Contas Google Autorizadas para Sincronizar:</span>
+              <div id="v-emails-autorizados" class="text-xs text-slate-700 font-medium mt-0.5"></div>
+            </div>
+
             <div class="col-span-2 sm:col-span-4"><span class="text-slate-400 block text-[11px]">Perfil Social</span><strong id="v-perfil-social" class="text-slate-800">-</strong></div>
           </div>
         </div>
@@ -170,8 +175,12 @@
           <label class="block sm:col-span-2">Microchip: <input id="f-microchip" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           
           <label class="block sm:col-span-2">⭐ Tutor Principal: <input id="f-tutor-principal" placeholder="Ex: Arlindo Santos" class="w-full border p-2.5 rounded-lg font-semibold text-sm" required /></label>
-          <label class="block sm:col-span-2">Outros Tutores: <input id="f-tutores-outros" placeholder="Ex: Idylla Santos, Maria Eduarda" class="w-full border p-2.5 rounded-lg text-sm" /></label>
+          <label class="block sm:col-span-2">Outros Tutores: <input id="f-tutores-outros" placeholder="Ex: Idylla Santos" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           
+          <label class="block sm:col-span-2">E-mails Google Autorizados para Editar (separe por vírgula): 
+            <input id="f-emails-autorizados" placeholder="exemplo1@gmail.com, exemplo2@gmail.com" class="w-full border p-2.5 rounded-lg text-sm font-mono text-emerald-700 bg-emerald-50/30" required />
+          </label>
+
           <label class="block sm:col-span-2">Perfil Social: <input id="f-perfil-social" placeholder="Ex: @theo_pet" class="w-full border p-2.5 rounded-lg text-sm" /></label>
 
           <div class="sm:col-span-2 text-right mt-2">
@@ -230,37 +239,14 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Cor Base</label>
-            <select id="np-cor-base" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
-              <option value="#d97706">Caramelo</option>
-              <option value="#fef08a">Creme</option>
-              <option value="#1e293b">Preto</option>
-              <option value="#ffffff">Branco</option>
-              <option value="#94a3b8">Cinza</option>
-              <option value="#78350f">Chocolate</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Padrão / Textura</label>
-            <select id="np-textura" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
-              <option value="Sólido">Sólido</option>
-              <option value="Manchado">Manchado</option>
-              <option value="Bicolor">Bicolor</option>
-              <option value="Tricolor">Tricolor</option>
-              <option value="Tigrado">Tigrado</option>
-            </select>
-          </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">E-mails Google Autorizados (separe por vírgula) *</label>
+          <input id="np-emails-autorizados" required placeholder="seu-email@gmail.com, email-esposa@gmail.com" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-mono text-emerald-800" />
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">⭐ Tutor Principal *</label>
           <input id="np-tutor-principal" required placeholder="Ex: Arlindo Santos" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Outros Tutores (Opcional)</label>
-          <input id="np-tutores-outros" placeholder="Ex: Idylla Santos, Maria Eduarda" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -296,48 +282,6 @@
           </div>
         </div>
 
-        <!-- Seção da Clínica -->
-        <div class="border-t border-slate-100 pt-3 space-y-2">
-          <span class="block font-bold text-slate-800">🏥 Clínica / Local de Aplicação</span>
-          <div>
-            <label class="block text-slate-500 mb-1">Nome da Clínica</label>
-            <input id="vac-local" placeholder="Ex: Clínica VetVida..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" autocomplete="off" />
-          </div>
-          <div>
-            <label class="block text-slate-500 mb-1">Endereço Completo</label>
-            <input id="vac-clinica-endereco" placeholder="Ex: Av. Principal, 123" class="w-full border border-slate-200 p-2 rounded-lg text-sm" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-slate-500 mb-1">Telefone</label>
-              <input id="vac-clinica-telefone" placeholder="Ex: (81) 99999-9999" class="w-full border border-slate-200 p-2 rounded-lg text-sm" />
-            </div>
-            <div>
-              <label class="block text-slate-500 mb-1">Website / Redes</label>
-              <input id="vac-clinica-site" placeholder="Ex: instagram.com/clinica" class="w-full border border-slate-200 p-2 rounded-lg text-sm" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Seção do Veterinário -->
-        <div class="border-t border-slate-100 pt-3 space-y-2">
-          <span class="block font-bold text-slate-800">👨‍⚕️ Médico Veterinário</span>
-          <div>
-            <label class="block text-slate-500 mb-1">Nome do Veterinário</label>
-            <input id="vac-vet-nome" placeholder="Ex: Dr. Silva" class="w-full border border-slate-200 p-2 rounded-lg text-sm" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-slate-500 mb-1">Especialidade</label>
-              <input id="vac-vet-especialidade" list="lista-especialidades" placeholder="Ex: Clínica Geral" class="w-full border border-slate-200 p-2 rounded-lg text-sm" />
-            </div>
-            <div>
-              <label class="block text-slate-500 mb-1">CRMV</label>
-              <input id="vac-vet-crmv" placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2 rounded-lg text-sm" />
-            </div>
-          </div>
-        </div>
-
         <div class="flex gap-2 pt-2">
           <button id="btn-fechar-modal" type="button" class="w-1/2 bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200">Cancelar</button>
           <button type="submit" class="w-1/2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700">Salvar</button>
@@ -346,9 +290,8 @@
     </div>
   </div>
 
-  <!-- Lógica JavaScript com Firebase Sync -->
+  <!-- Lógica JavaScript com Sincronização Compartilhada -->
   <script>
-    // Configurações Reais do Projeto no Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAF_Lni-sw3U6inVwmh2BibJ4Wik0U082w",
       authDomain: "vacinapet-221d3.firebaseapp.com",
@@ -360,17 +303,14 @@
       measurementId: "G-5MBTP15RJH"
     };
 
-    // Inicialização do Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // Estado da Aplicação
     let currentUser = null;
     let pets = [];
     let petAtualId = null;
 
-    // Elementos DOM
     const btnLogin = document.getElementById('btn-login');
     const btnLogout = document.getElementById('btn-logout');
     const userInfo = document.getElementById('user-info');
@@ -399,15 +339,13 @@
     const modalVacinaTitulo = document.getElementById('modal-vacina-titulo');
     const formVacina = document.getElementById('form-vacina');
 
-    // Autenticação Google
     btnLogin.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(err => alert("Erro ao fazer login: " + err.message));
+      auth.signInWithPopup(provider).catch(err => alert("Erro no login: " + err.message));
     });
 
     btnLogout.addEventListener('click', () => auth.signOut());
 
-    // Monitor do Estado de Login
     auth.onAuthStateChanged((user) => {
       if (user) {
         currentUser = user;
@@ -418,8 +356,10 @@
         alertLogin.classList.add('hidden');
         appContent.classList.remove('hidden');
 
-        // Inicia escuta em tempo real no caminho específico do usuário (pets/{uid})
-        ouvirDatabaseNuvem(user.uid);
+        // Preenche o modal de novo pet com o e-mail do criador por padrão
+        document.getElementById('np-emails-autorizados').value = user.email;
+
+        ouvirDatabaseNuvemCompartilhada();
       } else {
         currentUser = null;
         pets = [];
@@ -430,18 +370,22 @@
       }
     });
 
-    // Escuta em Tempo Real do Realtime Database
-    function ouvirDatabaseNuvem(uid) {
-      const petsRef = database.ref(`pets/${uid}`);
-      petsRef.on('value', (snapshot) => {
+    // Escuta todos os pets onde o e-mail do usuário logado está na lista de autorizados
+    function ouvirDatabaseNuvemCompartilhada() {
+      const familiasRef = database.ref('familias_pets');
+      familiasRef.on('value', (snapshot) => {
         const val = snapshot.val();
         pets = [];
-        if (val) {
+        if (val && currentUser) {
+          const emailChave = currentUser.email.replace(/\./g, '_');
           Object.keys(val).forEach(key => {
-            pets.push({ id: key, ...val[key] });
+            const petData = val[key];
+            if (petData.tutores_autorizados && petData.tutores_autorizados[emailChave]) {
+              pets.push({ id: key, ...petData });
+            }
           });
         }
-        
+
         if (!petAtualId && pets.length > 0) petAtualId = pets[0].id;
         if (petAtualId && !pets.find(p => p.id === petAtualId)) petAtualId = pets[0] ? pets[0].id : null;
 
@@ -450,15 +394,35 @@
       });
     }
 
-    // Gravação no Realtime Database
     function salvarPetNaNuvem(petData) {
       if (!currentUser) return;
-      database.ref(`pets/${currentUser.uid}/${petData.id}`).set(petData);
+
+      // Prepara a lista de permissões por e-mail para o Firebase
+      let emailsLista = [];
+      if (typeof petData.emailsInput === 'string') {
+        emailsLista = petData.emailsInput.split(',').map(e => e.trim().toLowerCase());
+      } else if (petData.tutores_autorizados) {
+        emailsLista = Object.keys(petData.tutores_autorizados).map(e => e.replace(/_/g, '.'));
+      }
+
+      if (!emailsLista.includes(currentUser.email.toLowerCase())) {
+        emailsLista.push(currentUser.email.toLowerCase());
+      }
+
+      const tutoresAutorizadosMap = {};
+      emailsLista.forEach(e => {
+        if (e) tutoresAutorizadosMap[e.replace(/\./g, '_')] = true;
+      });
+
+      petData.tutores_autorizados = tutoresAutorizadosMap;
+      delete petData.emailsInput;
+
+      database.ref(`familias_pets/${petData.id}`).set(petData);
     }
 
     function removerPetDaNuvem(petId) {
       if (!currentUser) return;
-      database.ref(`pets/${currentUser.uid}/${petId}`).remove();
+      database.ref(`familias_pets/${petId}`).remove();
     }
 
     function getPetAtivo() {
@@ -505,7 +469,7 @@
     function renderizarPet() {
       const pet = getPetAtivo();
       if (!pet) {
-        petView.innerHTML = '<div class="p-4 text-center text-slate-400">Nenhum pet cadastrado. Adicione um novo pet acima.</div>';
+        petView.innerHTML = '<div class="p-4 text-center text-slate-400">Nenhum pet compartilhado encontrado.</div>';
         tituloPet.textContent = 'Dados do Paciente';
         document.getElementById('lista-vacinas').innerHTML = '';
         return;
@@ -539,7 +503,11 @@
           outrosContainer.appendChild(tag);
         });
       }
-      
+
+      // Exibe os e-mails autorizados
+      const emailsList = pet.tutores_autorizados ? Object.keys(pet.tutores_autorizados).map(e => e.replace(/_/g, '.')) : [];
+      document.getElementById('v-emails-autorizados').textContent = emailsList.join(', ');
+
       const socialEl = document.getElementById('v-perfil-social');
       if (pet.perfilSocial) {
         const user = pet.perfilSocial.replace('@', '');
@@ -559,6 +527,7 @@
       document.getElementById('f-microchip').value = pet.microchip || '';
       document.getElementById('f-tutor-principal').value = pet.tutorPrincipal || '';
       document.getElementById('f-tutores-outros').value = pet.tutoresOutros || '';
+      document.getElementById('f-emails-autorizados').value = emailsList.join(', ');
       document.getElementById('f-perfil-social').value = pet.perfilSocial || '';
 
       renderizarVacinas();
@@ -583,10 +552,6 @@
         const dataApp = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
         const dataProx = v.dataProxima ? new Date(v.dataProxima + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não agendado';
 
-        const vetNome = v.vetNome || '-';
-        const vetEspecialidade = v.vetEspecialidade ? ` (${v.vetEspecialidade})` : '';
-        const vetCrmv = v.vetCrmv ? ` - ${v.vetCrmv}` : '';
-
         card.innerHTML = `
           <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
             <div>
@@ -609,25 +574,6 @@
               <span class="block text-amber-600 font-medium">Próxima Dose</span>
               <strong class="text-amber-800">${dataProx}</strong>
             </div>
-
-            ${v.local ? `
-              <div class="col-span-1 sm:col-span-2 bg-slate-50 p-2.5 rounded-lg space-y-1">
-                <div><strong>Clínica:</strong> ${v.local}</div>
-                ${v.clinicaEndereco ? `<div class="text-slate-500">📍 ${v.clinicaEndereco}</div>` : ''}
-                ${v.clinicaTelefone || v.clinicaSite ? `
-                  <div class="flex flex-wrap gap-3 text-emerald-600 pt-1">
-                    ${v.clinicaTelefone ? `<span>📞 ${v.clinicaTelefone}</span>` : ''}
-                    ${v.clinicaSite ? `<a href="${v.clinicaSite.startsWith('http') ? v.clinicaSite : 'https://' + v.clinicaSite}" target="_blank" class="hover:underline font-bold">🌐 Website</a>` : ''}
-                  </div>
-                ` : ''}
-              </div>
-            ` : ''}
-
-            ${vetNome !== '-' ? `
-              <div class="col-span-1 sm:col-span-2 bg-slate-50 p-2.5 rounded-lg">
-                <strong>Vet:</strong> ${vetNome}${vetEspecialidade}${vetCrmv}
-              </div>
-            ` : ''}
           </div>
         `;
 
@@ -674,14 +620,8 @@
         especie: especieSel,
         raca: document.getElementById('np-raca').value,
         sexo: document.getElementById('np-sexo').value,
-        corBase: document.getElementById('np-cor-base').value,
-        textura: document.getElementById('np-textura').value,
         tutorPrincipal: document.getElementById('np-tutor-principal').value,
-        tutoresOutros: document.getElementById('np-tutores-outros').value,
-        peso: '',
-        nascimento: '',
-        microchip: '',
-        perfilSocial: '',
+        emailsInput: document.getElementById('np-emails-autorizados').value,
         vacinas: []
       };
 
@@ -727,6 +667,7 @@
         pet.microchip = document.getElementById('f-microchip').value;
         pet.tutorPrincipal = document.getElementById('f-tutor-principal').value;
         pet.tutoresOutros = document.getElementById('f-tutores-outros').value;
+        pet.emailsInput = document.getElementById('f-emails-autorizados').value;
         pet.perfilSocial = document.getElementById('f-perfil-social').value;
 
         salvarPetNaNuvem(pet);
@@ -742,13 +683,6 @@
       document.getElementById('vac-desc').value = '';
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
-      document.getElementById('vac-local').value = '';
-      document.getElementById('vac-clinica-endereco').value = '';
-      document.getElementById('vac-clinica-telefone').value = '';
-      document.getElementById('vac-clinica-site').value = '';
-      document.getElementById('vac-vet-nome').value = '';
-      document.getElementById('vac-vet-especialidade').value = '';
-      document.getElementById('vac-vet-crmv').value = '';
     }
 
     function abrirModalVacinaParaNova() {
@@ -767,13 +701,6 @@
       document.getElementById('vac-desc').value = vacina.descricao || '';
       document.getElementById('vac-data-app').value = vacina.dataAplicacao || '';
       document.getElementById('vac-data-prox').value = vacina.dataProxima || '';
-      document.getElementById('vac-local').value = vacina.local || '';
-      document.getElementById('vac-clinica-endereco').value = vacina.clinicaEndereco || '';
-      document.getElementById('vac-clinica-telefone').value = vacina.clinicaTelefone || '';
-      document.getElementById('vac-clinica-site').value = vacina.clinicaSite || '';
-      document.getElementById('vac-vet-nome').value = vacina.vetNome || '';
-      document.getElementById('vac-vet-especialidade').value = vacina.vetEspecialidade || '';
-      document.getElementById('vac-vet-crmv').value = vacina.vetCrmv || '';
 
       modalVacinaTitulo.textContent = 'Editar Vacina';
       modalVacina.classList.remove('hidden');
@@ -792,14 +719,7 @@
         nome: document.getElementById('vac-nome').value,
         descricao: document.getElementById('vac-desc').value,
         dataAplicacao: document.getElementById('vac-data-app').value,
-        dataProxima: document.getElementById('vac-data-prox').value,
-        local: document.getElementById('vac-local').value,
-        clinicaEndereco: document.getElementById('vac-clinica-endereco').value,
-        clinicaTelefone: document.getElementById('vac-clinica-telefone').value,
-        clinicaSite: document.getElementById('vac-clinica-site').value,
-        vetNome: document.getElementById('vac-vet-nome').value,
-        vetEspecialidade: document.getElementById('vac-vet-especialidade').value,
-        vetCrmv: document.getElementById('vac-vet-crmv').value
+        dataProxima: document.getElementById('vac-data-prox').value
       };
 
       let vacinasList = pet.vacinas ? (Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas)) : [];
