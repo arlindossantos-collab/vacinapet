@@ -358,7 +358,6 @@
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Selecione a Vacina *</label>
           <select id="vac-selecao" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm font-semibold">
-            <!-- As opções serão preenchidas via JS dinamicamente com base na espécie -->
           </select>
         </div>
 
@@ -378,6 +377,32 @@
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Descrição / Indicação</label>
           <textarea id="vac-desc" rows="2" placeholder="O que esta vacina previne..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
+        </div>
+
+        <!-- Dados Veterinários e Local de Aplicação -->
+        <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200/60 space-y-2">
+          <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1">🩺 Dados da Aplicação & Veterinário</h4>
+          
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Médico Veterinário</label>
+              <input id="vac-vet-nome" placeholder="Ex: Dr. Carlos Silva" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1 text-[11px]">CRMV</label>
+              <input id="vac-vet-crmv" placeholder="Ex: CRMV-PE 1234" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Clínica / Hospital Veterinário</label>
+            <input id="vac-clinica-nome" placeholder="Ex: Clínica Vet Vida" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Endereço da Clínica</label>
+            <input id="vac-clinica-endereco" placeholder="Ex: Av. Boa Viagem, 1000 - Recife/PE" class="w-full border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-xs" />
+          </div>
         </div>
 
         <!-- Checkbox para Histórico sem Alerta de Atraso -->
@@ -434,7 +459,6 @@
     const database = firebase.database();
     const storage = firebase.storage();
 
-    // Dicionário de Vacinas Pré-definidas
     const VACINAS_PREDEFINIDAS = {
       Canina: [
         { nome: "V8 (Múltipla Canina)", desc: "Protege contra Cinomose, Parvovirose, Coronavirose, Hepatite Infecciosa, Adenovirose, Parainfluenza e Leptospirose (2 sorovares)." },
@@ -496,7 +520,6 @@
     const chkDoseUnica = document.getElementById('vac-dose-unica');
     const boxDataProx = document.getElementById('box-data-prox');
 
-    // Controle do Campo "Cor Principal - Outra"
     document.getElementById('np-cor-base').addEventListener('change', (e) => {
       document.getElementById('box-np-cor-outra').classList.toggle('hidden', e.target.value !== 'Outra');
     });
@@ -518,7 +541,6 @@
       }
     });
 
-    // Atualização Dinâmica do Seletor de Vacinas Pré-definidas
     vacSelecao.addEventListener('change', () => {
       const val = vacSelecao.value;
       if (val === 'outra') {
@@ -735,7 +757,6 @@
         socialEl.textContent = '-';
       }
 
-      // Preenchimento do formulário de edição
       document.getElementById('f-nome').value = pet.nome || '';
       document.getElementById('f-especie').value = pet.especie || 'Canina';
       document.getElementById('f-raca').value = pet.raca || '';
@@ -898,6 +919,21 @@
           }
         }
 
+        // Bloco dos Dados Veterinários
+        let vetInfoHtml = '';
+        if (v.vetNome || v.vetCrmv || v.clinicaNome || v.clinicaEndereco) {
+          vetInfoHtml = `
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-600 space-y-1">
+              <span class="font-bold text-slate-700 block flex items-center gap-1">🩺 Responsável Técnico & Local:</span>
+              <div class="flex flex-wrap gap-x-3 gap-y-0.5">
+                ${v.vetNome ? `<span><strong>Vet:</strong> ${v.vetNome} ${v.vetCrmv ? `(${v.vetCrmv})` : ''}</span>` : ''}
+                ${v.clinicaNome ? `<span><strong>Clínica:</strong> ${v.clinicaNome}</span>` : ''}
+              </div>
+              ${v.clinicaEndereco ? `<div class="text-[10px] text-slate-500">📍 ${v.clinicaEndereco}</div>` : ''}
+            </div>
+          `;
+        }
+
         card.className = `${cardBgBorder} rounded-2xl p-4 md:p-5 shadow-sm border space-y-2.5`;
 
         card.innerHTML = `
@@ -916,6 +952,8 @@
             ${appHtml}
             ${proxHtml}
           </div>
+
+          ${vetInfoHtml}
           ${acaoExtraHtml}
         `;
 
@@ -943,6 +981,12 @@
               document.getElementById('vac-renovada').checked = false;
               document.getElementById('vac-data-app').value = vacinaOld.dataProxima || '';
               
+              // Mantém o vet e a clínica da dose anterior como sugestão
+              document.getElementById('vac-vet-nome').value = vacinaOld.vetNome || '';
+              document.getElementById('vac-vet-crmv').value = vacinaOld.vetCrmv || '';
+              document.getElementById('vac-clinica-nome').value = vacinaOld.clinicaNome || '';
+              document.getElementById('vac-clinica-endereco').value = vacinaOld.clinicaEndereco || '';
+
               modalVacinaTitulo.textContent = 'Registrar Nova Dose Aplicada';
               modalVacina.classList.remove('hidden');
             }
@@ -1130,6 +1174,12 @@
       document.getElementById('vac-renovada').checked = false;
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
+      
+      document.getElementById('vac-vet-nome').value = '';
+      document.getElementById('vac-vet-crmv').value = '';
+      document.getElementById('vac-clinica-nome').value = '';
+      document.getElementById('vac-clinica-endereco').value = '';
+
       boxDataProx.classList.remove('hidden');
     }
 
@@ -1151,7 +1201,6 @@
 
       document.getElementById('vac-id').value = vacina.id;
       
-      // Verifica se a vacina é pré-definida ou manual
       const pertenceLista = Array.from(vacSelecao.options).some(o => o.value === vacina.nome);
       if (pertenceLista) {
         vacSelecao.value = vacina.nome;
@@ -1178,6 +1227,11 @@
 
       document.getElementById('vac-data-app').value = vacina.dataAplicacao || '';
       document.getElementById('vac-data-prox').value = vacina.dataProxima || '';
+
+      document.getElementById('vac-vet-nome').value = vacina.vetNome || '';
+      document.getElementById('vac-vet-crmv').value = vacina.vetCrmv || '';
+      document.getElementById('vac-clinica-nome').value = vacina.clinicaNome || '';
+      document.getElementById('vac-clinica-endereco').value = vacina.clinicaEndereco || '';
 
       modalVacinaTitulo.textContent = 'Editar Vacina';
       modalVacina.classList.remove('hidden');
@@ -1212,7 +1266,11 @@
         doseUnica: isDoseUnica,
         renovada: isRenovada,
         dataAplicacao: document.getElementById('vac-data-app').value,
-        dataProxima: isDoseUnica ? '' : document.getElementById('vac-data-prox').value
+        dataProxima: isDoseUnica ? '' : document.getElementById('vac-data-prox').value,
+        vetNome: document.getElementById('vac-vet-nome').value,
+        vetCrmv: document.getElementById('vac-vet-crmv').value,
+        clinicaNome: document.getElementById('vac-clinica-nome').value,
+        clinicaEndereco: document.getElementById('vac-clinica-endereco').value
       };
 
       let vacinasList = pet.vacinas ? (Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas)) : [];
