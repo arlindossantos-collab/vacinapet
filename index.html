@@ -43,21 +43,19 @@
       </div>
     </header>
 
-    <!-- Seleção e Adição de Pets -->
-    <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200 flex flex-col gap-3">
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-          <label for="seletor-pet" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Trocar de Pet:</label>
-          <select id="seletor-pet" class="w-full border-2 border-emerald-500/30 p-3 rounded-xl text-base font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500 bg-emerald-50/40 shadow-sm cursor-pointer min-h-[48px]"></select>
-        </div>
-        <div class="flex gap-2 w-full sm:w-auto">
-          <button id="btn-abrir-modal-pet" type="button" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs py-3 px-4 rounded-xl transition flex items-center justify-center gap-1.5 shadow min-h-[44px]">
-            🐾 + Novo Pet
-          </button>
-          <button id="btn-deletar-pet" type="button" class="text-xs text-red-500 hover:bg-red-50 p-3 rounded-xl transition border border-red-200 min-h-[44px] px-3.5" title="Excluir Pet Selecionado">
-            🗑️
-          </button>
-        </div>
+    <!-- Seleção e Adição de Pets (Ajustado o layout e a posição da Lixeira) -->
+    <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200">
+      <label for="seletor-pet" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Selecionar Paciente:</label>
+      <div class="flex items-center gap-2">
+        <select id="seletor-pet" class="flex-1 border-2 border-emerald-500/30 p-2.5 rounded-xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500 bg-emerald-50/40 shadow-sm cursor-pointer min-h-[44px]"></select>
+        
+        <button id="btn-abrir-modal-pet" type="button" class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs py-2.5 px-3.5 rounded-xl transition flex items-center justify-center gap-1 shadow min-h-[44px] whitespace-nowrap">
+          🐾 + Novo
+        </button>
+        
+        <button id="btn-deletar-pet" type="button" class="text-xs text-red-500 hover:bg-red-50 hover:text-red-600 p-2.5 rounded-xl transition border border-red-200 min-h-[44px] px-3 flex items-center justify-center" title="Excluir Pet Selecionado">
+          🗑️
+        </button>
       </div>
     </div>
 
@@ -319,7 +317,6 @@
   <!-- Lógica da Aplicação (JavaScript) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Inicialização defensiva do Autocomplete do Google Places
       let autocomplete;
       function initGoogleAutocomplete() {
         const inputClinica = document.getElementById('vac-local');
@@ -381,11 +378,9 @@
         }
       ];
 
-      // Estado
       let pets = JSON.parse(localStorage.getItem('pets_app')) || petsPadrao;
       let petAtualId = localStorage.getItem('pet_atual_id') || (pets[0] ? pets[0].id : null);
 
-      // Elementos do DOM
       const seletorPet = document.getElementById('seletor-pet');
       const btnAbrirModalPet = document.getElementById('btn-abrir-modal-pet');
       const btnFecharModalPet = document.getElementById('btn-fechar-modal-pet');
