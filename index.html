@@ -1480,7 +1480,7 @@
       }
     });
 
-    // Modais e Forms de Médico e Clínica
+    // Modais e Forms de Médico
     btnAbrirModalMedico.addEventListener('click', () => {
       document.getElementById('med-id').value = '';
       formMedico.reset();
@@ -1500,16 +1500,21 @@
 
     formMedico.addEventListener('submit', (e) => {
       e.preventDefault();
-      const id = document.getElementById('med-id').value || ('med-' + Date.now());
-      salvarMedicoNaNuvem({
+      const currentId = document.getElementById('med-id').value;
+      const id = currentId && currentId.trim() !== '' ? currentId : ('med-' + Date.now());
+      
+      const medicoObjeto = {
         id: id,
-        nome: document.getElementById('med-nome').value,
-        crmv: document.getElementById('med-crmv').value
-      });
+        nome: document.getElementById('med-nome').value.trim(),
+        crmv: document.getElementById('med-crmv').value.trim()
+      };
+
+      salvarMedicoNaNuvem(medicoObjeto);
       modalMedico.classList.add('hidden');
       formMedico.reset();
     });
 
+    // Modais e Forms de Clínica
     btnAbrirModalClinica.addEventListener('click', () => {
       document.getElementById('cli-id').value = '';
       formClinica.reset();
@@ -1529,12 +1534,16 @@
 
     formClinica.addEventListener('submit', (e) => {
       e.preventDefault();
-      const id = document.getElementById('cli-id').value || ('cli-' + Date.now());
-      salvarClinicaNaNuvem({
+      const currentId = document.getElementById('cli-id').value;
+      const id = currentId && currentId.trim() !== '' ? currentId : ('cli-' + Date.now());
+
+      const clinicaObjeto = {
         id: id,
-        nome: document.getElementById('cli-nome').value,
-        endereco: document.getElementById('cli-endereco').value
-      });
+        nome: document.getElementById('cli-nome').value.trim(),
+        endereco: document.getElementById('cli-endereco').value.trim()
+      };
+
+      salvarClinicaNaNuvem(clinicaObjeto);
       modalClinica.classList.add('hidden');
       formClinica.reset();
     });
