@@ -99,7 +99,6 @@
             </div>
             <div>
               <h2 id="titulo-pet" class="text-lg md:text-xl font-bold text-slate-800">Dados do Paciente</h2>
-              <!-- TAGS ATUALIZADAS: RAÇA E PELO -->
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span id="badge-raca" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">-</span>
                 <span id="badge-comprimento" class="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Pelo Curto</span>
@@ -413,6 +412,14 @@
           <label class="block font-semibold text-slate-700 mb-1">Nome da Vacina *</label>
           <input id="vac-nome" required placeholder="Ex: Canigen R, GiardiaVax..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Status da Vacina *</label>
+          <select id="vac-status" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm font-semibold">
+            <option value="aplicada">🟢 Já Aplicada / Concluída</option>
+            <option value="pendente">⏳ Pendente / Agendada</option>
+          </select>
+        </div>
         
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Descrição / Indicação</label>
@@ -429,7 +436,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Data Aplicação *</label>
+            <label id="lbl-vac-data-app" class="block font-semibold text-slate-700 mb-1">Data Aplicação *</label>
             <input id="vac-data-app" required type="date" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
           </div>
           <div id="box-data-prox">
@@ -499,8 +506,18 @@
     const modalVacinaTitulo = document.getElementById('modal-vacina-titulo');
     const formVacina = document.getElementById('form-vacina');
 
+    const vacStatus = document.getElementById('vac-status');
+    const lblVacDataApp = document.getElementById('lbl-vac-data-app');
     const chkDoseUnica = document.getElementById('vac-dose-unica');
     const boxDataProx = document.getElementById('box-data-prox');
+
+    vacStatus.addEventListener('change', () => {
+      if (vacStatus.value === 'pendente') {
+        lblVacDataApp.textContent = 'Data Agendada *';
+      } else {
+        lblVacDataApp.textContent = 'Data Aplicação *';
+      }
+    });
 
     chkDoseUnica.addEventListener('change', () => {
       if (chkDoseUnica.checked) {
@@ -687,7 +704,6 @@
         avatarEmoji.classList.remove('hidden');
       }
 
-      // ATUALIZAÇÃO DAS TAGS ABAIXO DO NOME DO PET
       badgeRaca.textContent = pet.raca || 'SRD';
       badgeComprimento.textContent = `Pelo ${pet.comprimentoPelo || 'Curto'}`;
 
@@ -771,63 +787,116 @@
 
       vacinasLista.forEach(v => {
         const card = document.createElement('div');
-        const dataApp = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+        const isPendente = v.status === 'pendente';
+        const dataAppStr = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
 
         let proxHtml = '';
+        let appHtml = '';
         let cardBgBorder = "bg-white border-slate-200";
 
-        if (v.doseUnica) {
-          proxHtml = `
-            <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
-              <span class="block text-emerald-700 font-semibold">Tipo de Dose</span>
-              <strong class="text-emerald-900">Dose Única Aplicada ✅</strong>
+        if (isPendente) {
+          // VACINA PENDENTE / AGENDADA
+          const dtAgendada = v.dataAplicacao ? new Date(v.dataAplicacao + 'T00:00:00') : null;
+          let diffDias = 0;
+          if (dtAgendada) {
+            const diffTempo = dtAgendada.getTime() - hoje.getTime();
+            diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
+          }
+
+          appHtml = `
+            <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-amber-900">
+              <span class="block text-amber-700 font-semibold">Status</span>
+              <strong>⏳ Agendada (${dataAppStr})</strong>
             </div>
           `;
-        } else if (v.dataProxima) {
-          const dtProx = new Date(v.dataProxima + 'T00:00:00');
-          const diffTempo = dtProx.getTime() - hoje.getTime();
-          const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
-          const dataProxStr = dtProx.toLocaleDateString('pt-BR');
 
           if (diffDias < 0) {
             cardBgBorder = "bg-red-50/40 border-red-200";
             proxHtml = `
               <div class="bg-red-100 p-2.5 rounded-lg border border-red-200 text-red-900">
-                <span class="block text-red-600 font-bold">Próxima Dose (${dataProxStr})</span>
-                <strong>⚠️ Atrasada há ${Math.abs(diffDias)} dia(s)</strong>
+                <span class="block text-red-600 font-bold">Aviso de Agendamento</span>
+                <strong>⚠️ Não realizada (Era para ${dataAppStr})</strong>
               </div>
             `;
           } else if (diffDias === 0) {
-            cardBgBorder = "bg-red-50/60 border-red-300";
+            cardBgBorder = "bg-amber-50/80 border-amber-300";
             proxHtml = `
-              <div class="bg-red-500 text-white p-2.5 rounded-lg font-bold">
-                <span class="block text-red-100 text-[11px]">Próxima Dose</span>
-                🚨 APLICAR HOJE! (${dataProxStr})
-              </div>
-            `;
-          } else if (diffDias <= 30) {
-            cardBgBorder = "bg-amber-50/40 border-amber-200";
-            proxHtml = `
-              <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-300 text-amber-900">
-                <span class="block text-amber-700 font-bold">Próxima Dose (${dataProxStr})</span>
-                <strong>⏳ Faltam ${diffDias} dias</strong>
+              <div class="bg-amber-500 text-white p-2.5 rounded-lg font-bold">
+                <span class="block text-amber-100 text-[11px]">Agendada para</span>
+                🚨 HOJE! (${dataAppStr})
               </div>
             `;
           } else {
             proxHtml = `
-              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
-                <span class="block text-emerald-700 font-bold">Próxima Dose (${dataProxStr})</span>
-                <strong>Faltam ${diffDias} dias</strong>
+              <div class="bg-blue-50 p-2.5 rounded-lg border border-blue-200 text-blue-900">
+                <span class="block text-blue-700 font-bold">Contagem Regressiva</span>
+                <strong>Faltam ${diffDias} dias para aplicar</strong>
               </div>
             `;
           }
+
         } else {
-          proxHtml = `
+          // VACINA APLICADA / CONCLUÍDA
+          appHtml = `
             <div class="bg-slate-50 p-2.5 rounded-lg">
-              <span class="block text-slate-400">Próxima Dose</span>
-              <strong>Não agendado</strong>
+              <span class="block text-slate-400">Data de Aplicação</span>
+              <strong class="text-slate-800">🟢 ${dataAppStr}</strong>
             </div>
           `;
+
+          if (v.doseUnica) {
+            proxHtml = `
+              <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+                <span class="block text-emerald-700 font-semibold">Tipo de Dose</span>
+                <strong class="text-emerald-900">Dose Única Aplicada ✅</strong>
+              </div>
+            `;
+          } else if (v.dataProxima) {
+            const dtProx = new Date(v.dataProxima + 'T00:00:00');
+            const diffTempo = dtProx.getTime() - hoje.getTime();
+            const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
+            const dataProxStr = dtProx.toLocaleDateString('pt-BR');
+
+            if (diffDias < 0) {
+              cardBgBorder = "bg-red-50/40 border-red-200";
+              proxHtml = `
+                <div class="bg-red-100 p-2.5 rounded-lg border border-red-200 text-red-900">
+                  <span class="block text-red-600 font-bold">Próxima Dose (${dataProxStr})</span>
+                  <strong>⚠️ Atrasada há ${Math.abs(diffDias)} dia(s)</strong>
+                </div>
+              `;
+            } else if (diffDias === 0) {
+              cardBgBorder = "bg-red-50/60 border-red-300";
+              proxHtml = `
+                <div class="bg-red-500 text-white p-2.5 rounded-lg font-bold">
+                  <span class="block text-red-100 text-[11px]">Próxima Dose</span>
+                  🚨 APLICAR HOJE! (${dataProxStr})
+                </div>
+              `;
+            } else if (diffDias <= 30) {
+              cardBgBorder = "bg-amber-50/40 border-amber-200";
+              proxHtml = `
+                <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-300 text-amber-900">
+                  <span class="block text-amber-700 font-bold">Próxima Dose (${dataProxStr})</span>
+                  <strong>⏳ Faltam ${diffDias} dias</strong>
+                </div>
+              `;
+            } else {
+              proxHtml = `
+                <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
+                  <span class="block text-emerald-700 font-bold">Próxima Dose (${dataProxStr})</span>
+                  <strong>Faltam ${diffDias} dias</strong>
+                </div>
+              `;
+            }
+          } else {
+            proxHtml = `
+              <div class="bg-slate-50 p-2.5 rounded-lg">
+                <span class="block text-slate-400">Próxima Dose</span>
+                <strong>Não agendado</strong>
+              </div>
+            `;
+          }
         }
 
         card.className = `${cardBgBorder} rounded-2xl p-4 md:p-5 shadow-sm border space-y-2.5`;
@@ -835,7 +904,7 @@
         card.innerHTML = `
           <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
             <div>
-              <h3 class="text-base font-bold text-slate-800">✅ ${v.nome}</h3>
+              <h3 class="text-base font-bold text-slate-800">${isPendente ? '⏳' : '✅'} ${v.nome}</h3>
               ${v.descricao ? `<p class="text-xs text-slate-500 mt-0.5">${v.descricao}</p>` : ''}
             </div>
             <div class="flex items-center gap-2">
@@ -845,10 +914,7 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-            <div class="bg-slate-50 p-2.5 rounded-lg">
-              <span class="block text-slate-400">Aplicação</span>
-              <strong>${dataApp}</strong>
-            </div>
+            ${appHtml}
             ${proxHtml}
           </div>
         `;
@@ -1006,6 +1072,8 @@
     function limparFormVacina() {
       document.getElementById('vac-id').value = '';
       document.getElementById('vac-nome').value = '';
+      document.getElementById('vac-status').value = 'aplicada';
+      lblVacDataApp.textContent = 'Data Aplicação *';
       document.getElementById('vac-desc').value = '';
       document.getElementById('vac-dose-unica').checked = false;
       document.getElementById('vac-data-app').value = '';
@@ -1026,6 +1094,8 @@
     function abrirModalVacinaParaEdicao(vacina) {
       document.getElementById('vac-id').value = vacina.id;
       document.getElementById('vac-nome').value = vacina.nome || '';
+      document.getElementById('vac-status').value = vacina.status || 'aplicada';
+      lblVacDataApp.textContent = vacina.status === 'pendente' ? 'Data Agendada *' : 'Data Aplicação *';
       document.getElementById('vac-desc').value = vacina.descricao || '';
       
       const doseUnica = !!vacina.doseUnica;
@@ -1056,6 +1126,7 @@
 
       const vacData = {
         nome: document.getElementById('vac-nome').value,
+        status: document.getElementById('vac-status').value,
         descricao: document.getElementById('vac-desc').value,
         doseUnica: isDoseUnica,
         dataAplicacao: document.getElementById('vac-data-app').value,
