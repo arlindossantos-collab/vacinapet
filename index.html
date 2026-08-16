@@ -13,33 +13,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
-
-  <!-- Google Places API (Opcional) -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API_DO_GOOGLE&libraries=places" async defer></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-3 md:p-8">
-
-  <!-- Datalist com Especialidades Veterinárias -->
-  <datalist id="lista-especialidades">
-    <option value="Anestesiologia Veterinária"></option>
-    <option value="Cardiologia Veterinária"></option>
-    <option value="Cirurgia Veterinária"></option>
-    <option value="Clínica Geral"></option>
-    <option value="Dermatologia Veterinária"></option>
-    <option value="Endocrinologia Veterinária"></option>
-    <option value="Felinos"></option>
-    <option value="Fisioterapia e Reabilitação"></option>
-    <option value="Gastroenterologia Veterinária"></option>
-    <option value="Infectologia Veterinária"></option>
-    <option value="Nefrologia e Urologia"></option>
-    <option value="Neurologia Veterinária"></option>
-    <option value="Nutrição Animal"></option>
-    <option value="Oftalmologia Veterinária"></option>
-    <option value="Oncologia Veterinária"></option>
-    <option value="Ortopedia Veterinária"></option>
-    <option value="Odontologia Veterinária"></option>
-    <option value="Radiologia e Diagnóstico por Imagem"></option>
-  </datalist>
 
   <div class="max-w-3xl mx-auto space-y-5">
     
@@ -157,16 +132,40 @@
           <label class="block">Raça: <input id="f-raca" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
           <label class="block">Sexo: <input id="f-sexo" class="w-full border p-2.5 rounded-lg text-sm" required /></label>
 
-          <label class="block">Padrão / Textura: 
-            <select id="f-textura" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-              <option value="Sólido">Sólido (Cor Única)</option>
-              <option value="Bicolor">Bicolor</option>
-              <option value="Tricolor">Tricolor</option>
-              <option value="Manchado">Manchado / Malhado</option>
-              <option value="Tigrado">Tigrado / Atigrado</option>
-              <option value="Merle">Merlé / Degradê</option>
+          <label class="block">Cor Principal: 
+            <select id="f-cor-base" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+              <option value="Branco">Branco</option>
+              <option value="Preto">Preto</option>
+              <option value="Caramelo">Caramelo</option>
+              <option value="Cinza">Cinza</option>
+              <option value="Marrom">Marrom</option>
+              <option value="Outra">Outra...</option>
             </select>
           </label>
+
+          <div id="box-f-cor-outra" class="hidden">
+            <label class="block">Especifique a Cor Principal: 
+              <input id="f-cor-outra" placeholder="Ex: Dourado, Creme..." class="w-full border p-2.5 rounded-lg text-sm" />
+            </label>
+          </div>
+
+          <label class="block">Textura da Pelagem: 
+            <select id="f-textura" class="w-full border p-2.5 rounded-lg bg-white text-sm">
+              <option value="Sólido">Sólido (Cor Única)</option>
+              <option value="Malhado">Malhado</option>
+              <option value="Bicolor">Bicolor</option>
+              <option value="Tricolor">Tricolor</option>
+              <option value="Rajado">Rajado</option>
+              <option value="Listrado">Listrado</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </label>
+
+          <div id="box-f-outras-cores" class="block sm:col-span-2">
+            <label class="block">Outras Cores Presentes na Pelagem: 
+              <input id="f-outras-cores" placeholder="Ex: Branco e Marrom, Manchas Pretas..." class="w-full border p-2.5 rounded-lg text-sm" />
+            </label>
+          </div>
 
           <label class="block">Comprimento do Pelo: 
             <select id="f-comprimento-pelo" class="w-full border p-2.5 rounded-lg bg-white text-sm">
@@ -174,44 +173,6 @@
               <option value="Longo">Longo</option>
             </select>
           </label>
-
-          <label class="block">Cor Base da Pelagem: 
-            <select id="f-cor-base" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-              <option value="#d97706">Caramelo / Castanho</option>
-              <option value="#fef08a">Creme / Amarelo</option>
-              <option value="#1e293b">Preto / Escuro</option>
-              <option value="#ffffff">Branco / Claro</option>
-              <option value="#94a3b8">Cinza / Prateado</option>
-              <option value="#78350f">Chocolate / Marrom</option>
-              <option value="#f97316">Ruivo / Laranja</option>
-            </select>
-          </label>
-
-          <div id="box-f-cor-secundaria" class="hidden">
-            <label class="block">Segunda Cor: 
-              <select id="f-cor-secundaria" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-                <option value="Branco">Branco</option>
-                <option value="Preto">Preto</option>
-                <option value="Caramelo">Caramelo</option>
-                <option value="Creme">Creme</option>
-                <option value="Cinza">Cinza</option>
-                <option value="Marrom">Marrom</option>
-              </select>
-            </label>
-          </div>
-
-          <div id="box-f-cor-terciaria" class="hidden">
-            <label class="block">Terceira Cor: 
-              <select id="f-cor-terciaria" class="w-full border p-2.5 rounded-lg bg-white text-sm">
-                <option value="Branco">Branco</option>
-                <option value="Preto">Preto</option>
-                <option value="Caramelo">Caramelo</option>
-                <option value="Creme">Creme</option>
-                <option value="Cinza">Cinza</option>
-                <option value="Marrom">Marrom</option>
-              </select>
-            </label>
-          </div>
 
           <label class="block">Peso (kg): <input id="f-peso" placeholder="Ex: 3.5" class="w-full border p-2.5 rounded-lg text-sm" /></label>
           <label class="block">Data de Nascimento: <input id="f-nascimento" type="date" class="w-full border p-2.5 rounded-lg text-sm" /></label>
@@ -293,16 +254,34 @@
           </div>
         </div>
 
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Cor Principal</label>
+          <select id="np-cor-base" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
+            <option value="Branco">Branco</option>
+            <option value="Preto">Preto</option>
+            <option value="Caramelo">Caramelo</option>
+            <option value="Cinza">Cinza</option>
+            <option value="Marrom">Marrom</option>
+            <option value="Outra">Outra...</option>
+          </select>
+        </div>
+
+        <div id="box-np-cor-outra" class="hidden">
+          <label class="block font-semibold text-slate-700 mb-1">Especifique a Cor Principal</label>
+          <input id="np-cor-outra" placeholder="Ex: Dourado, Creme..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+        </div>
+
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Padrão / Textura</label>
+            <label class="block font-semibold text-slate-700 mb-1">Textura da Pelagem</label>
             <select id="np-textura" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
               <option value="Sólido">Sólido (Cor Única)</option>
+              <option value="Malhado">Malhado</option>
               <option value="Bicolor">Bicolor</option>
               <option value="Tricolor">Tricolor</option>
-              <option value="Manchado">Manchado / Malhado</option>
-              <option value="Tigrado">Tigrado / Atigrado</option>
-              <option value="Merle">Merlé / Degradê</option>
+              <option value="Rajado">Rajado</option>
+              <option value="Listrado">Listrado</option>
+              <option value="Outro">Outro</option>
             </select>
           </div>
 
@@ -316,40 +295,8 @@
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Cor Base da Pelagem</label>
-          <select id="np-cor-base" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
-            <option value="#d97706">Caramelo / Castanho</option>
-            <option value="#fef08a">Creme / Amarelo</option>
-            <option value="#1e293b">Preto / Escuro</option>
-            <option value="#ffffff">Branco / Claro</option>
-            <option value="#94a3b8">Cinza / Prateado</option>
-            <option value="#78350f">Chocolate / Marrom</option>
-            <option value="#f97316">Ruivo / Laranja</option>
-          </select>
-        </div>
-
-        <div id="box-np-cor-secundaria" class="hidden">
-          <label class="block font-semibold text-slate-700 mb-1">Segunda Cor</label>
-          <select id="np-cor-secundaria" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
-            <option value="Branco">Branco</option>
-            <option value="Preto">Preto</option>
-            <option value="Caramelo">Caramelo</option>
-            <option value="Creme">Creme</option>
-            <option value="Cinza">Cinza</option>
-            <option value="Marrom">Marrom</option>
-          </select>
-        </div>
-
-        <div id="box-np-cor-terciaria" class="hidden">
-          <label class="block font-semibold text-slate-700 mb-1">Terceira Cor</label>
-          <select id="np-cor-terciaria" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm">
-            <option value="Branco">Branco</option>
-            <option value="Preto">Preto</option>
-            <option value="Caramelo">Caramelo</option>
-            <option value="Creme">Creme</option>
-            <option value="Cinza">Cinza</option>
-            <option value="Marrom">Marrom</option>
-          </select>
+          <label class="block font-semibold text-slate-700 mb-1">Outras Cores Presentes na Pelagem</label>
+          <input id="np-outras-cores" placeholder="Ex: Branco no peito e patas caramelo..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -409,8 +356,15 @@
         <input type="hidden" id="vac-id" />
         
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Nome da Vacina *</label>
-          <input id="vac-nome" required placeholder="Ex: Canigen R, GiardiaVax..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          <label class="block font-semibold text-slate-700 mb-1">Selecione a Vacina *</label>
+          <select id="vac-selecao" class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-sm font-semibold">
+            <!-- As opções serão preenchidas via JS dinamicamente com base na espécie -->
+          </select>
+        </div>
+
+        <div id="box-vac-nome-manual" class="hidden">
+          <label class="block font-semibold text-slate-700 mb-1">Nome da Vacina (Manual) *</label>
+          <input id="vac-nome-manual" placeholder="Digite o nome da vacina..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
         </div>
 
         <div>
@@ -423,7 +377,7 @@
         
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Descrição / Indicação</label>
-          <input id="vac-desc" placeholder="Ex: Antirrábica..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" />
+          <textarea id="vac-desc" rows="2" placeholder="O que esta vacina previne..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
         </div>
 
         <!-- Checkbox para Histórico sem Alerta de Atraso -->
@@ -480,6 +434,24 @@
     const database = firebase.database();
     const storage = firebase.storage();
 
+    // Dicionário de Vacinas Pré-definidas
+    const VACINAS_PREDEFINIDAS = {
+      Canina: [
+        { nome: "V8 (Múltipla Canina)", desc: "Protege contra Cinomose, Parvovirose, Coronavirose, Hepatite Infecciosa, Adenovirose, Parainfluenza e Leptospirose (2 sorovares)." },
+        { nome: "V10 (Múltipla Canina)", desc: "Protege contra todas as doenças da V8 + 2 sorovares adicionais de Leptospirose." },
+        { nome: "Antirrábica", desc: "Protege contra a Raiva (doença fatal transmissível a humanos)." },
+        { nome: "GiardiaVax (Giardíase)", desc: "Previne a giardíase e reduz a cisto-eliminação da protozoose fecal." },
+        { nome: "Traqueobronquite (Gripe Canina / Bronchi-Shield / KC)", desc: "Protege contra a gripe dos canis causada por Bordetella bronchiseptica e vírus Parainfluenza." },
+        { nome: "Leishmaniose (Leishtec)", desc: "Auxilia na prevenção da Leishmaniose Visceral Canina." }
+      ],
+      Felina: [
+        { nome: "V3 (Tríplice Felina)", desc: "Protege contra Panleucopenia, Rinotraqueíte e Calicivirose." },
+        { nome: "V4 (Quádrurpla Felina)", desc: "Protege contra Panleucopenia, Rinotraqueíte, Calicivirose e Clamidiose." },
+        { nome: "V5 (Quíntupla Felina)", desc: "Protege contra Panleucopenia, Rinotraqueíte, Calicivirose, Clamidiose e Leucemia Felina (FeLV)." },
+        { nome: "Antirrábica", desc: "Protege contra a Raiva (doença fatal transmissível a humanos)." }
+      ]
+    };
+
     let currentUser = null;
     let pets = [];
     let petAtualId = null;
@@ -515,18 +487,26 @@
     const modalVacinaTitulo = document.getElementById('modal-vacina-titulo');
     const formVacina = document.getElementById('form-vacina');
 
+    const vacSelecao = document.getElementById('vac-selecao');
+    const vacNomeManual = document.getElementById('vac-nome-manual');
+    const boxVacNomeManual = document.getElementById('box-vac-nome-manual');
+    const vacDesc = document.getElementById('vac-desc');
     const vacStatus = document.getElementById('vac-status');
     const lblVacDataApp = document.getElementById('lbl-vac-data-app');
     const chkDoseUnica = document.getElementById('vac-dose-unica');
-    const chkRenovada = document.getElementById('vac-renovada');
     const boxDataProx = document.getElementById('box-data-prox');
 
+    // Controle do Campo "Cor Principal - Outra"
+    document.getElementById('np-cor-base').addEventListener('change', (e) => {
+      document.getElementById('box-np-cor-outra').classList.toggle('hidden', e.target.value !== 'Outra');
+    });
+
+    document.getElementById('f-cor-base').addEventListener('change', (e) => {
+      document.getElementById('box-f-cor-outra').classList.toggle('hidden', e.target.value !== 'Outra');
+    });
+
     vacStatus.addEventListener('change', () => {
-      if (vacStatus.value === 'pendente') {
-        lblVacDataApp.textContent = 'Data Agendada *';
-      } else {
-        lblVacDataApp.textContent = 'Data Aplicação *';
-      }
+      lblVacDataApp.textContent = vacStatus.value === 'pendente' ? 'Data Agendada *' : 'Data Aplicação *';
     });
 
     chkDoseUnica.addEventListener('change', () => {
@@ -538,25 +518,26 @@
       }
     });
 
-    function gerenciarCamposCores(texturaElId, boxSecId, boxTerId) {
-      const val = document.getElementById(texturaElId).value;
-      const boxSec = document.getElementById(boxSecId);
-      const boxTer = document.getElementById(boxTerId);
-
-      if (val === 'Bicolor' || val === 'Manchado') {
-        boxSec.classList.remove('hidden');
-        boxTer.classList.add('hidden');
-      } else if (val === 'Tricolor') {
-        boxSec.classList.remove('hidden');
-        boxTer.classList.remove('hidden');
+    // Atualização Dinâmica do Seletor de Vacinas Pré-definidas
+    vacSelecao.addEventListener('change', () => {
+      const val = vacSelecao.value;
+      if (val === 'outra') {
+        boxVacNomeManual.classList.remove('hidden');
+        vacNomeManual.required = true;
+        vacDesc.value = '';
       } else {
-        boxSec.classList.add('hidden');
-        boxTer.classList.add('hidden');
+        boxVacNomeManual.classList.add('hidden');
+        vacNomeManual.required = false;
+        
+        const pet = getPetAtivo();
+        const especie = pet ? pet.especie : 'Canina';
+        const lista = VACINAS_PREDEFINIDAS[especie] || VACINAS_PREDEFINIDAS.Canina;
+        const vacEncontrada = lista.find(v => v.nome === val);
+        if (vacEncontrada) {
+          vacDesc.value = vacEncontrada.desc;
+        }
       }
-    }
-
-    document.getElementById('np-textura').addEventListener('change', () => gerenciarCamposCores('np-textura', 'box-np-cor-secundaria', 'box-np-cor-terciaria'));
-    document.getElementById('f-textura').addEventListener('change', () => gerenciarCamposCores('f-textura', 'box-f-cor-secundaria', 'box-f-cor-terciaria'));
+    });
 
     btnLogin.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -576,7 +557,6 @@
         appContent.classList.remove('hidden');
 
         document.getElementById('np-emails-autorizados').value = user.email;
-
         ouvirDatabaseNuvemCompartilhada();
       } else {
         currentUser = null;
@@ -702,8 +682,6 @@
       const emoji = pet.especie === 'Felina' ? '🐱' : '🐶';
       tituloPet.textContent = `${pet.nome}`;
 
-      avatarPetDisplay.style.backgroundColor = pet.corBase || '#f3f4f6';
-      
       if (pet.fotoUrl) {
         avatarEmoji.classList.add('hidden');
         avatarImg.src = pet.fotoUrl;
@@ -721,11 +699,10 @@
       document.getElementById('v-raca').textContent = `${pet.especie === 'Felina' ? 'Felina' : 'Canina'} (${pet.raca})`;
       document.getElementById('v-sexo').textContent = pet.sexo;
 
-      let listaCoresStr = pet.textura || 'Sólido';
-      if (pet.corSecundaria) listaCoresStr += ` (${pet.corSecundaria}`;
-      if (pet.corTerciaria) listaCoresStr += ` + ${pet.corTerciaria}`;
-      if (pet.corSecundaria) listaCoresStr += `)`;
-      document.getElementById('v-cor').textContent = listaCoresStr;
+      const corExibicao = pet.corBase === 'Outra' ? (pet.corOutra || 'Outra') : (pet.corBase || 'Branco');
+      let pelagemStr = `${corExibicao} (${pet.textura || 'Sólido'})`;
+      if (pet.outrasCores) pelagemStr += ` - ${pet.outrasCores}`;
+      document.getElementById('v-cor').textContent = pelagemStr;
 
       document.getElementById('v-pelo').textContent = pet.comprimentoPelo || 'Curto';
       document.getElementById('v-peso').textContent = pet.peso ? `${pet.peso} kg` : '-';
@@ -758,15 +735,17 @@
         socialEl.textContent = '-';
       }
 
+      // Preenchimento do formulário de edição
       document.getElementById('f-nome').value = pet.nome || '';
       document.getElementById('f-especie').value = pet.especie || 'Canina';
       document.getElementById('f-raca').value = pet.raca || '';
       document.getElementById('f-sexo').value = pet.sexo || '';
+      document.getElementById('f-cor-base').value = pet.corBase || 'Branco';
+      document.getElementById('f-cor-outra').value = pet.corOutra || '';
+      document.getElementById('box-f-cor-outra').classList.toggle('hidden', pet.corBase !== 'Outra');
       document.getElementById('f-textura').value = pet.textura || 'Sólido';
+      document.getElementById('f-outras-cores').value = pet.outrasCores || '';
       document.getElementById('f-comprimento-pelo').value = pet.comprimentoPelo || 'Curto';
-      document.getElementById('f-cor-base').value = pet.corBase || '#d97706';
-      document.getElementById('f-cor-secundaria').value = pet.corSecundaria || 'Branco';
-      document.getElementById('f-cor-terciaria').value = pet.corTerciaria || 'Branco';
       document.getElementById('f-peso').value = pet.peso || '';
       document.getElementById('f-nascimento').value = pet.nascimento || '';
       document.getElementById('f-local-nasc').value = pet.localNascimento || '';
@@ -776,7 +755,6 @@
       document.getElementById('f-emails-autorizados').value = emailsList.join(', ');
       document.getElementById('f-perfil-social').value = pet.perfilSocial || '';
 
-      gerenciarCamposCores('f-textura', 'box-f-cor-secundaria', 'box-f-cor-terciaria');
       renderizarVacinas();
     }
 
@@ -846,7 +824,6 @@
           }
 
         } else {
-          // VACINA APLICADA
           appHtml = `
             <div class="bg-slate-50 p-2.5 rounded-lg">
               <span class="block text-slate-400">Data de Aplicação</span>
@@ -862,7 +839,6 @@
               </div>
             `;
           } else if (v.renovada) {
-            // DOSE DO HISTÓRICO JÁ RENOVADA POSTERIORMENTE
             proxHtml = `
               <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
                 <span class="block text-emerald-700 font-semibold">Histórico Registrado</span>
@@ -946,7 +922,6 @@
         container.appendChild(card);
       });
 
-      // Evento para botão de renovar vacina rapidamente
       document.querySelectorAll('.btn-renovar-vacina').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const vacinaId = e.currentTarget.getAttribute('data-id');
@@ -955,15 +930,16 @@
             const list = Array.isArray(pet.vacinas) ? pet.vacinas : Object.values(pet.vacinas || {});
             const vacinaOld = list.find(v => v.id === vacinaId);
             if (vacinaOld) {
-              // Marca a antiga como renovada no histórico
               vacinaOld.renovada = true;
+              prepararModalVacinaParaEspecie(pet.especie);
 
-              // Prepara a nova dose para o modal
-              document.getElementById('vac-id').value = ''; // Novo ID
-              document.getElementById('vac-nome').value = vacinaOld.nome || '';
-              document.getElementById('vac-desc').value = vacinaOld.descricao || '';
-              document.getElementById('vac-status').value = 'aplicada';
-              document.getElementById('vac-dose-unica').checked = false;
+              document.getElementById('vac-id').value = '';
+              vacSelecao.value = 'outra';
+              boxVacNomeManual.classList.remove('hidden');
+              vacNomeManual.value = vacinaOld.nome || '';
+              vacDesc.value = vacinaOld.descricao || '';
+              vacStatus.value = 'aplicada';
+              chkDoseUnica.checked = false;
               document.getElementById('vac-renovada').checked = false;
               document.getElementById('vac-data-app').value = vacinaOld.dataProxima || '';
               
@@ -1005,7 +981,6 @@
       if (currentUser) {
         document.getElementById('np-emails-autorizados').value = currentUser.email;
       }
-      gerenciarCamposCores('np-textura', 'box-np-cor-secundaria', 'box-np-cor-terciaria');
       modalNovoPet.classList.remove('hidden');
     });
 
@@ -1033,11 +1008,11 @@
         especie: especieSel,
         raca: document.getElementById('np-raca').value,
         sexo: document.getElementById('np-sexo').value,
-        textura: document.getElementById('np-textura').value,
-        comprimentoPelo: document.getElementById('np-comprimento-pelo').value,
         corBase: document.getElementById('np-cor-base').value,
-        corSecundaria: document.getElementById('np-cor-secundaria').value,
-        corTerciaria: document.getElementById('np-cor-terciaria').value,
+        corOutra: document.getElementById('np-cor-outra').value,
+        textura: document.getElementById('np-textura').value,
+        outrasCores: document.getElementById('np-outras-cores').value,
+        comprimentoPelo: document.getElementById('np-comprimento-pelo').value,
         peso: document.getElementById('np-peso').value,
         nascimento: document.getElementById('np-nascimento').value,
         localNascimento: document.getElementById('np-local-nasc').value,
@@ -1098,11 +1073,11 @@
         pet.especie = document.getElementById('f-especie').value;
         pet.raca = document.getElementById('f-raca').value;
         pet.sexo = document.getElementById('f-sexo').value;
-        pet.textura = document.getElementById('f-textura').value;
-        pet.comprimentoPelo = document.getElementById('f-comprimento-pelo').value;
         pet.corBase = document.getElementById('f-cor-base').value;
-        pet.corSecundaria = document.getElementById('f-cor-secundaria').value;
-        pet.corTerciaria = document.getElementById('f-cor-terciaria').value;
+        pet.corOutra = document.getElementById('f-cor-outra').value;
+        pet.textura = document.getElementById('f-textura').value;
+        pet.outrasCores = document.getElementById('f-outras-cores').value;
+        pet.comprimentoPelo = document.getElementById('f-comprimento-pelo').value;
         pet.peso = document.getElementById('f-peso').value;
         pet.nascimento = document.getElementById('f-nascimento').value;
         pet.localNascimento = document.getElementById('f-local-nasc').value;
@@ -1121,13 +1096,37 @@
       }
     });
 
+    function prepararModalVacinaParaEspecie(especie) {
+      vacSelecao.innerHTML = '';
+      const lista = VACINAS_PREDEFINIDAS[especie] || VACINAS_PREDEFINIDAS.Canina;
+
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = "";
+      defaultOpt.textContent = "-- Selecione na lista --";
+      vacSelecao.appendChild(defaultOpt);
+
+      lista.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.nome;
+        opt.textContent = v.nome;
+        vacSelecao.appendChild(opt);
+      });
+
+      const optOutra = document.createElement('option');
+      optOutra.value = "outra";
+      optOutra.textContent = "✍️ Outra (Digitar Manualmente)";
+      vacSelecao.appendChild(optOutra);
+    }
+
     function limparFormVacina() {
       document.getElementById('vac-id').value = '';
-      document.getElementById('vac-nome').value = '';
-      document.getElementById('vac-status').value = 'aplicada';
+      vacSelecao.value = '';
+      vacNomeManual.value = '';
+      boxVacNomeManual.classList.add('hidden');
+      vacDesc.value = '';
+      vacStatus.value = 'aplicada';
       lblVacDataApp.textContent = 'Data Aplicação *';
-      document.getElementById('vac-desc').value = '';
-      document.getElementById('vac-dose-unica').checked = false;
+      chkDoseUnica.checked = false;
       document.getElementById('vac-renovada').checked = false;
       document.getElementById('vac-data-app').value = '';
       document.getElementById('vac-data-prox').value = '';
@@ -1135,24 +1134,40 @@
     }
 
     function abrirModalVacinaParaNova() {
-      if (!getPetAtivo()) {
+      const pet = getPetAtivo();
+      if (!pet) {
         alert('Cadastre um pet primeiro!');
         return;
       }
       limparFormVacina();
+      prepararModalVacinaParaEspecie(pet.especie);
       modalVacinaTitulo.textContent = 'Nova Vacina';
       modalVacina.classList.remove('hidden');
     }
 
     function abrirModalVacinaParaEdicao(vacina) {
+      const pet = getPetAtivo();
+      prepararModalVacinaParaEspecie(pet ? pet.especie : 'Canina');
+
       document.getElementById('vac-id').value = vacina.id;
-      document.getElementById('vac-nome').value = vacina.nome || '';
-      document.getElementById('vac-status').value = vacina.status || 'aplicada';
+      
+      // Verifica se a vacina é pré-definida ou manual
+      const pertenceLista = Array.from(vacSelecao.options).some(o => o.value === vacina.nome);
+      if (pertenceLista) {
+        vacSelecao.value = vacina.nome;
+        boxVacNomeManual.classList.add('hidden');
+      } else {
+        vacSelecao.value = 'outra';
+        boxVacNomeManual.classList.remove('hidden');
+        vacNomeManual.value = vacina.nome || '';
+      }
+
+      vacStatus.value = vacina.status || 'aplicada';
       lblVacDataApp.textContent = vacina.status === 'pendente' ? 'Data Agendada *' : 'Data Aplicação *';
-      document.getElementById('vac-desc').value = vacina.descricao || '';
+      vacDesc.value = vacina.descricao || '';
       
       const doseUnica = !!vacina.doseUnica;
-      document.getElementById('vac-dose-unica').checked = doseUnica;
+      chkDoseUnica.checked = doseUnica;
       document.getElementById('vac-renovada').checked = !!vacina.renovada;
 
       if (doseUnica) {
@@ -1177,13 +1192,23 @@
       if (!pet) return;
 
       const vacId = document.getElementById('vac-id').value;
-      const isDoseUnica = document.getElementById('vac-dose-unica').checked;
+      const isDoseUnica = chkDoseUnica.checked;
       const isRenovada = document.getElementById('vac-renovada').checked;
 
+      let nomeVacinaFinal = vacSelecao.value;
+      if (nomeVacinaFinal === 'outra' || !nomeVacinaFinal) {
+        nomeVacinaFinal = vacNomeManual.value;
+      }
+
+      if (!nomeVacinaFinal) {
+        alert("Informe o nome da vacina!");
+        return;
+      }
+
       const vacData = {
-        nome: document.getElementById('vac-nome').value,
-        status: document.getElementById('vac-status').value,
-        descricao: document.getElementById('vac-desc').value,
+        nome: nomeVacinaFinal,
+        status: vacStatus.value,
+        descricao: vacDesc.value,
         doseUnica: isDoseUnica,
         renovada: isRenovada,
         dataAplicacao: document.getElementById('vac-data-app').value,
