@@ -99,8 +99,9 @@
             </div>
             <div>
               <h2 id="titulo-pet" class="text-lg md:text-xl font-bold text-slate-800">Dados do Paciente</h2>
+              <!-- TAGS ATUALIZADAS: RAÇA E PELO -->
               <div class="flex items-center gap-1.5 mt-0.5">
-                <span id="badge-textura" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">Sólido</span>
+                <span id="badge-raca" class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">-</span>
                 <span id="badge-comprimento" class="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Pelo Curto</span>
               </div>
             </div>
@@ -489,7 +490,7 @@
     const avatarPetDisplay = document.getElementById('avatar-pet-display');
     const avatarEmoji = document.getElementById('avatar-emoji');
     const avatarImg = document.getElementById('avatar-img');
-    const badgeTextura = document.getElementById('badge-textura');
+    const badgeRaca = document.getElementById('badge-raca');
     const badgeComprimento = document.getElementById('badge-comprimento');
 
     const btnAbrirModal = document.getElementById('btn-abrir-modal');
@@ -510,7 +511,6 @@
       }
     });
 
-    // Controla opções de cores secundárias e terciárias no cadastro e edição
     function gerenciarCamposCores(texturaElId, boxSecId, boxTerId) {
       const val = document.getElementById(texturaElId).value;
       const boxSec = document.getElementById(boxSecId);
@@ -687,14 +687,14 @@
         avatarEmoji.classList.remove('hidden');
       }
 
-      badgeTextura.textContent = `${pet.textura || 'Sólido'}`;
+      // ATUALIZAÇÃO DAS TAGS ABAIXO DO NOME DO PET
+      badgeRaca.textContent = pet.raca || 'SRD';
       badgeComprimento.textContent = `Pelo ${pet.comprimentoPelo || 'Curto'}`;
 
       document.getElementById('v-nome').textContent = pet.nome;
       document.getElementById('v-raca').textContent = `${pet.especie === 'Felina' ? 'Felina' : 'Canina'} (${pet.raca})`;
       document.getElementById('v-sexo').textContent = pet.sexo;
 
-      // Monta String de Cores
       let listaCoresStr = pet.textura || 'Sólido';
       if (pet.corSecundaria) listaCoresStr += ` (${pet.corSecundaria}`;
       if (pet.corTerciaria) listaCoresStr += ` + ${pet.corTerciaria}`;
@@ -732,7 +732,6 @@
         socialEl.textContent = '-';
       }
 
-      // Preenche Formulário de Edição
       document.getElementById('f-nome').value = pet.nome || '';
       document.getElementById('f-especie').value = pet.especie || 'Canina';
       document.getElementById('f-raca').value = pet.raca || '';
@@ -791,7 +790,6 @@
           const dataProxStr = dtProx.toLocaleDateString('pt-BR');
 
           if (diffDias < 0) {
-            // Atrasado
             cardBgBorder = "bg-red-50/40 border-red-200";
             proxHtml = `
               <div class="bg-red-100 p-2.5 rounded-lg border border-red-200 text-red-900">
@@ -800,7 +798,6 @@
               </div>
             `;
           } else if (diffDias === 0) {
-            // Hoje
             cardBgBorder = "bg-red-50/60 border-red-300";
             proxHtml = `
               <div class="bg-red-500 text-white p-2.5 rounded-lg font-bold">
@@ -809,7 +806,6 @@
               </div>
             `;
           } else if (diffDias <= 30) {
-            // Alerta Amarelo/Laranja
             cardBgBorder = "bg-amber-50/40 border-amber-200";
             proxHtml = `
               <div class="bg-amber-100 p-2.5 rounded-lg border border-amber-300 text-amber-900">
@@ -818,7 +814,6 @@
               </div>
             `;
           } else {
-            // Verde
             proxHtml = `
               <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-emerald-900">
                 <span class="block text-emerald-700 font-bold">Próxima Dose (${dataProxStr})</span>
