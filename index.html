@@ -21,7 +21,7 @@
     <!-- Cabeçalho com Logo Ampliada -->
     <header class="bg-emerald-600 text-white rounded-2xl p-5 md:p-6 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div class="flex items-center gap-4">
-        <img src="logo.png" alt="Logo" class="h-20 md:h-24 w-auto object-contain drop-shadow-md" />
+        <img src="logo.png" alt="Logo" class="h-28 md:h-32 w-auto object-contain drop-shadow-md" />
         <div>
           <p class="text-white text-base md:text-lg font-bold leading-tight">Controle de vacinas de seus pets.</p>
         </div>
@@ -487,15 +487,18 @@
           <textarea id="vac-desc" rows="2" placeholder="O que esta vacina previne..." class="w-full border border-slate-200 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
         </div>
 
-        <!-- Ciclo Concluído SIM/NÃO -->
+        <!-- Classificação do Status da Vacina -->
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-          <label class="block font-semibold text-slate-700">Ciclo de imunização concluído? *</label>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="border p-2 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-white border-slate-200 font-bold text-xs">
-              <input type="radio" name="vac-ciclo-concluido" value="sim" class="accent-emerald-600"> 🟢 SIM
+          <label class="block font-semibold text-slate-700">Classificação / Status da Vacina *</label>
+          <div class="grid grid-cols-3 gap-1.5">
+            <label class="border p-2 rounded-xl flex items-center justify-center gap-1 cursor-pointer hover:bg-white border-slate-200 font-bold text-[11px] text-center">
+              <input type="radio" name="vac-status-classificacao" value="unica" class="accent-emerald-600"> 💧 Única
             </label>
-            <label class="border p-2 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-white border-slate-200 font-bold text-xs">
-              <input type="radio" name="vac-ciclo-concluido" value="nao" checked class="accent-emerald-600"> ⏳ NÃO
+            <label class="border p-2 rounded-xl flex items-center justify-center gap-1 cursor-pointer hover:bg-white border-slate-200 font-bold text-[11px] text-center">
+              <input type="radio" name="vac-status-classificacao" value="completo" class="accent-emerald-600"> 🟢 Completo
+            </label>
+            <label class="border p-2 rounded-xl flex items-center justify-center gap-1 cursor-pointer hover:bg-white border-slate-200 font-bold text-[11px] text-center">
+              <input type="radio" name="vac-status-classificacao" value="pendente" checked class="accent-emerald-600"> ⏳ Pendente
             </label>
           </div>
         </div>
@@ -708,9 +711,9 @@
       abaTabClinicas.className = "py-2.5 px-4 rounded-t-xl bg-white border-t border-x border-slate-200 text-emerald-700 shadow-sm whitespace-nowrap";
     });
 
-    document.querySelectorAll('input[name="vac-ciclo-concluido"]').forEach(radio => {
+    document.querySelectorAll('input[name="vac-status-classificacao"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
-        boxDataProx.classList.toggle('hidden', e.target.value === 'sim');
+        boxDataProx.classList.toggle('hidden', e.target.value !== 'pendente');
       });
     });
 
@@ -1157,13 +1160,18 @@
         return;
       }
 
+      // Função auxiliar para determinar o status real da vacina
+      const getStatusVacina = (v) => {
+        if (v.statusClassificacao) return v.statusClassificacao;
+        if (v.cicloConcluido) {
+          return (!v.doseInicial || !v.ultimaDose || v.doseInicial === v.ultimaDose) ? 'unica' : 'completo';
+        }
+        return 'pendente';
+      };
+
       // Aplicação do Filtro por Status
-      if (filtroStatusAtual === 'unica') {
-        vacinasLista = vacinasLista.filter(v => v.cicloConcluido && (!v.doseInicial || !v.ultimaDose || v.doseInicial === v.ultimaDose));
-      } else if (filtroStatusAtual === 'completo') {
-        vacinasLista = vacinasLista.filter(v => !!v.cicloConcluido);
-      } else if (filtroStatusAtual === 'pendente') {
-        vacinasLista = vacinasLista.filter(v => !v.cicloConcluido);
+      if (filtroStatusAtual !== 'todos') {
+        vacinasLista = vacinasLista.filter(v => getStatusVacina(v) === filtroStatusAtual);
       }
 
       if (vacinasLista.length === 0) {
@@ -1171,44 +1179,57 @@
         return;
       }
 
-      // Agrupar vacinas por Mês (Analisando data de referência: Próxima Dose > Última Dose > Dose Inicial)
+      // Agrupar vacinas por Mês e Ano
       const gruposMes = {};
 
       vacinasLista.forEach(v => {
         let dataRef = v.dataProxima || v.ultimaDose || v.doseInicial;
-        let chaveMes = "Sem data definida";
+        let chaveOrdenacao = "9999-99"; // Para datas não definidas ficarem ao final
+        let tituloMes = "Sem data definida";
 
         if (dataRef) {
           const partes = dataRef.split('-');
           if (partes.length === 3) {
             const ano = partes[0];
-            const mesIdx = parseInt(partes[1], 10) - 1;
+            const mesStr = partes[1];
+            const mesIdx = parseInt(mesStr, 10) - 1;
             const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            chaveMes = `${nomesMeses[mesIdx]} / ${ano}`;
+            
+            chaveOrdenacao = `${ano}-${mesStr}`;
+            tituloMes = `${nomesMeses[mesIdx]} / ${ano}`;
           }
         }
 
-        if (!gruposMes[chaveMes]) gruposMes[chaveMes] = [];
-        gruposMes[chaveMes].push(v);
+        if (!gruposMes[chaveOrdenacao]) {
+          gruposMes[chaveOrdenacao] = {
+            titulo: tituloMes,
+            itens: []
+          };
+        }
+        gruposMes[chaveOrdenacao].itens.push(v);
       });
+
+      // Ordenar chaves dos meses: Mês/Ano mais próximo -> mais distante
+      const chavesOrdenadas = Object.keys(gruposMes).sort();
 
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
 
-      // Renderizar por grupos de mês
-      Object.keys(gruposMes).forEach(mesTitulo => {
+      // Renderizar por grupos de mês ordenados
+      chavesOrdenadas.forEach(chave => {
+        const grupo = gruposMes[chave];
         const blocoMes = document.createElement('div');
         blocoMes.className = "space-y-3";
 
         const tituloHeader = document.createElement('div');
         tituloHeader.className = "flex items-center gap-2 border-b-2 border-emerald-500/30 pb-1.5 pt-2";
         tituloHeader.innerHTML = `
-          <span class="text-emerald-700 font-bold text-sm md:text-base">📅 ${mesTitulo}</span>
-          <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${gruposMes[mesTitulo].length} ${gruposMes[mesTitulo].length === 1 ? 'vacina' : 'vacinas'}</span>
+          <span class="text-emerald-700 font-bold text-sm md:text-base">📅 ${grupo.titulo}</span>
+          <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${grupo.itens.length} ${grupo.itens.length === 1 ? 'vacina' : 'vacinas'}</span>
         `;
         blocoMes.appendChild(tituloHeader);
 
-        gruposMes[mesTitulo].forEach(v => {
+        grupo.itens.forEach(v => {
           const card = document.createElement('div');
           const dtInicialStr = v.doseInicial ? new Date(v.doseInicial + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
           const dtUltimaStr = v.ultimaDose ? new Date(v.ultimaDose + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
@@ -1217,55 +1238,68 @@
           let cardBgBorder = "bg-white border-slate-200";
           let acaoAgendaHtml = '';
 
-          if (v.cicloConcluido) {
-            const isDoseUnica = (!v.doseInicial || !v.ultimaDose || v.doseInicial === v.ultimaDose);
+          const st = getStatusVacina(v);
+
+          if (st === 'unica') {
             statusHtml = `
               <div class="col-span-1 sm:col-span-2 bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-900 flex items-center gap-2">
-                <span class="text-lg">✅</span>
+                <span class="text-lg">💧</span>
                 <div>
                   <span class="block text-emerald-700 font-bold text-xs uppercase tracking-wider">Status</span>
-                  <strong class="text-sm">${isDoseUnica ? 'Dose única concluída' : 'Ciclo de imunização concluído'}</strong>
+                  <strong class="text-sm">Dose Única Concluída</strong>
                 </div>
               </div>
             `;
-          } else if (v.dataProxima) {
-            const dtProx = new Date(v.dataProxima + 'T00:00:00');
-            const diffTempo = dtProx.getTime() - hoje.getTime();
-            const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
-            const dtProxStr = dtProx.toLocaleDateString('pt-BR');
-
-            let msgDias = `Faltam ${diffDias} dias`;
-            if (diffDias === 0) msgDias = "🚨 APLICAR HOJE!";
-            else if (diffDias < 0) msgDias = `⚠️ Atrasada há ${Math.abs(diffDias)} dias`;
-
-            if (diffDias < 0) cardBgBorder = "bg-amber-50/40 border-amber-300";
-            else if (diffDias === 0) cardBgBorder = "bg-red-50/60 border-red-300";
-
+          } else if (st === 'completo') {
             statusHtml = `
-              <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-500 font-semibold text-xs">Próxima Dose Agendada:</span>
-                  <span class="font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-emerald-700'}">${dtProxStr}</span>
-                </div>
-                <div class="text-xs font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-slate-700'}">
-                  ⏳ ${msgDias}
+              <div class="col-span-1 sm:col-span-2 bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-900 flex items-center gap-2">
+                <span class="text-lg">🟢</span>
+                <div>
+                  <span class="block text-emerald-700 font-bold text-xs uppercase tracking-wider">Status</span>
+                  <strong class="text-sm">Ciclo Completo Concluído</strong>
                 </div>
               </div>
             `;
+          } else { // Pendente
+            if (v.dataProxima) {
+              const dtProx = new Date(v.dataProxima + 'T00:00:00');
+              const diffTempo = dtProx.getTime() - hoje.getTime();
+              const diffDias = Math.ceil(diffTempo / (1000 * 3600 * 24));
+              const dtProxStr = dtProx.toLocaleDateString('pt-BR');
 
-            const linkAgenda = gerarLinkGoogleAgenda(v, pet.nome);
-            acaoAgendaHtml = `
-              <a href="${linkAgenda}" target="_blank" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 border border-blue-200 shadow-sm mt-1">
-                📅 Adicionar Lembrete no Google Agenda
-              </a>
-            `;
-          } else {
-            statusHtml = `
-              <div class="col-span-1 sm:col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span class="block text-slate-400 text-xs">Status</span>
-                <strong class="text-slate-700 text-xs">Sem próxima dose agendada (Pendente)</strong>
-              </div>
-            `;
+              let msgDias = `Faltam ${diffDias} dias`;
+              if (diffDias === 0) msgDias = "🚨 APLICAR HOJE!";
+              else if (diffDias < 0) msgDias = `⚠️ Atrasada há ${Math.abs(diffDias)} dias`;
+
+              if (diffDias < 0) cardBgBorder = "bg-amber-50/40 border-amber-300";
+              else if (diffDias === 0) cardBgBorder = "bg-red-50/60 border-red-300";
+
+              statusHtml = `
+                <div class="col-span-1 sm:col-span-2 bg-amber-50/50 p-3 rounded-xl border border-amber-200 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <span class="text-amber-800 font-semibold text-xs">⏳ Próxima Dose Agendada (Pendente):</span>
+                    <span class="font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-emerald-700'}">${dtProxStr}</span>
+                  </div>
+                  <div class="text-xs font-bold ${diffDias <= 0 ? 'text-red-600' : 'text-slate-700'}">
+                    ${msgDias}
+                  </div>
+                </div>
+              `;
+
+              const linkAgenda = gerarLinkGoogleAgenda(v, pet.nome);
+              acaoAgendaHtml = `
+                <a href="${linkAgenda}" target="_blank" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 border border-blue-200 shadow-sm mt-1">
+                  📅 Adicionar Lembrete no Google Agenda
+                </a>
+              `;
+            } else {
+              statusHtml = `
+                <div class="col-span-1 sm:col-span-2 bg-amber-50/40 p-3 rounded-xl border border-amber-200">
+                  <span class="block text-amber-700 text-xs font-bold">Status: Pendente</span>
+                  <strong class="text-slate-700 text-xs font-normal">Sem próxima dose agendada</strong>
+                </div>
+              `;
+            }
           }
 
           let vetInfoHtml = '';
@@ -1583,8 +1617,8 @@
       boxVacNomeManual.classList.add('hidden');
       vacDesc.value = '';
       
-      const radioConcluidoNao = document.querySelector('input[name="vac-ciclo-concluido"][value="nao"]');
-      if (radioConcluidoNao) radioConcluidoNao.checked = true;
+      const radioPendente = document.querySelector('input[name="vac-status-classificacao"][value="pendente"]');
+      if (radioPendente) radioPendente.checked = true;
 
       document.getElementById('vac-dose-inicial').value = '';
       document.getElementById('vac-ultima-dose').value = '';
@@ -1630,12 +1664,19 @@
 
       vacDesc.value = vacina.descricao || '';
       
-      const isConcluido = !!vacina.cicloConcluido;
-      const radioValue = isConcluido ? 'sim' : 'nao';
-      const radioEl = document.querySelector(`input[name="vac-ciclo-concluido"][value="${radioValue}"]`);
+      let statusVal = vacina.statusClassificacao;
+      if (!statusVal) {
+        if (vacina.cicloConcluido) {
+          statusVal = (!vacina.doseInicial || !vacina.ultimaDose || vacina.doseInicial === vacina.ultimaDose) ? 'unica' : 'completo';
+        } else {
+          statusVal = 'pendente';
+        }
+      }
+
+      const radioEl = document.querySelector(`input[name="vac-status-classificacao"][value="${statusVal}"]`);
       if (radioEl) radioEl.checked = true;
 
-      boxDataProx.classList.toggle('hidden', isConcluido);
+      boxDataProx.classList.toggle('hidden', statusVal !== 'pendente');
 
       document.getElementById('vac-dose-inicial').value = vacina.doseInicial || '';
       document.getElementById('vac-ultima-dose').value = vacina.ultimaDose || '';
@@ -1659,8 +1700,8 @@
       if (!pet) return;
 
       const vacId = document.getElementById('vac-id').value;
-      const cicloConcluidoVal = document.querySelector('input[name="vac-ciclo-concluido"]:checked').value;
-      const isCicloConcluido = cicloConcluidoVal === 'sim';
+      const statusClassificacaoVal = document.querySelector('input[name="vac-status-classificacao"]:checked').value;
+      const isCicloConcluido = statusClassificacaoVal !== 'pendente';
 
       let nomeVacinaFinal = vacSelecao.value;
       if (nomeVacinaFinal === 'outra' || !nomeVacinaFinal) {
@@ -1675,10 +1716,11 @@
       const vacData = {
         nome: nomeVacinaFinal,
         descricao: vacDesc.value,
+        statusClassificacao: statusClassificacaoVal,
         cicloConcluido: isCicloConcluido,
         doseInicial: document.getElementById('vac-dose-inicial').value,
         ultimaDose: document.getElementById('vac-ultima-dose').value,
-        dataProxima: isCicloConcluido ? '' : document.getElementById('vac-data-prox').value,
+        dataProxima: statusClassificacaoVal === 'pendente' ? document.getElementById('vac-data-prox').value : '',
         vetNome: document.getElementById('vac-vet-nome').value,
         vetCrmv: document.getElementById('vac-vet-crmv').value,
         clinicaNome: document.getElementById('vac-clinica-nome').value,
